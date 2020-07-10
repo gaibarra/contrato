@@ -205,9 +205,10 @@ class Secuencia(ClaseModelo2):
     nivel3 = models.IntegerField('Nivel 3', blank=True, null=True)
     nivel4 = models.IntegerField('Nivel 4', blank=True, null=True)
     identificador = models.CharField('Identificador', max_length=10, blank=True, null=True)
+    textoSecuencia = RichTextField('Texto secuencia', blank=True, null=True)
 
     def __str__(self):
-        return '{}'.format(self.id)
+        return '{}'.format(self.tipocontrato)
 
     def save(self):
         super(Secuencia,self).save()
@@ -216,3 +217,60 @@ class Secuencia(ClaseModelo2):
         verbose_name_plural = "Secuencia del contrato"
         verbose_name="Secuencia del contrato"
         
+class Estados(ClaseModelo2):
+    claveEstado = models.CharField('Clave del Estado', max_length=2, blank=False, null=False)
+    nombreEstado = models.CharField('Numbre del Estado', max_length=50, blank=False, null=False)
+   
+
+    def __str__(self):
+        return '{}'.format(self.nombreEstado)
+
+    def save(self):
+        super(Estados,self).save()
+
+    class Meta:
+        verbose_name_plural = "Estados"
+        verbose_name="Estado"
+
+class Niveles(ClaseModelo2):
+    nivel = models.CharField('Nivel Escolar', max_length=50, blank=False, null=False)
+    
+    def __str__(self):
+        return '{}'.format(self.nivel)
+
+    def save(self):
+        super(Niveles,self).save()
+
+    class Meta:
+        verbose_name_plural = "Niveles"
+        verbose_name="Nivel"
+
+class Profesiones(ClaseModelo2):
+    abrevProfesion = models.CharField('Abreviatura', max_length=20, blank=False, null=False)
+    descProfesion = models.CharField('Profesión', max_length=100, blank=False, null=False)
+    
+    def __str__(self):
+        return '{}'.format(self.descProfesion)
+
+    def save(self):
+        super(Profesiones,self).save()
+
+    class Meta:
+        verbose_name_plural = "Profesiones"
+        verbose_name="Profesión"
+
+
+class Puestos(ClaseModelo2):
+    nombrePuesto = models.CharField('Nombre Puesto', max_length=100, blank=False, null=False)
+    claveCampus = models.CharField('Clave del Campus', max_length=3, blank=False, null=False)
+    impHora = MoneyField('Importe por Hora', max_digits=14, decimal_places=2, blank=False, null=False, default_currency="MXN")
+
+    def __str__(self):
+        return '{}'.format(self.nombrePuesto)
+
+    def save(self):
+        super(Puestos,self).save()
+
+    class Meta:
+        verbose_name_plural = "Puestos"
+        verbose_name="Puesto"                                                                     

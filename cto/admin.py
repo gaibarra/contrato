@@ -5,7 +5,16 @@ from import_export.admin import ImportExportModelAdmin
 
 # Register your models here.
 
+class SecuenciaResource(resources.ModelResource):
+    class Meta:
+        model = Secuencia
 
+class SecuenciaAdmin(ImportExportModelAdmin,admin.ModelAdmin):
+    search_fields = ['textoSecuencia']
+    list_display = ('tipocontrato', 'nivel1', 'nivel2', 'nivel3','nivel4', 'identificador','textoSecuencia')
+    resource_class = SecuenciaResource
+
+admin.site.register(Secuencia, SecuenciaAdmin)
 
 class DepartamentoResource(resources.ModelResource):
     class Meta:
@@ -23,8 +32,8 @@ class PartesResource(resources.ModelResource):
         model = Partes
 
 class PartesAdmin(ImportExportModelAdmin,admin.ModelAdmin):
-    search_fields = ['funcionario']
-    list_display = ('nombreParte', 'nombresParte', 'apellidoPaternoParte', 'apellidoMaternoParte')
+    search_fields = ['nombreParte']
+    list_display = ('nombreParte','nombresParte', 'apellidoPaternoParte', 'apellidoMaternoParte' )
     resource_class = PartesResource
 
 admin.site.register(Partes, PartesAdmin)
@@ -33,5 +42,6 @@ admin.site.register(Partes, PartesAdmin)
 admin.site.register(Ciclos)
 admin.site.register(Tipocontrato)
 admin.site.register(Contratos)
-admin.site.register(Secuencia)
-
+admin.site.register(Estados)
+admin.site.register(Niveles)
+admin.site.register(Profesiones)
