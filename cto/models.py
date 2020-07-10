@@ -19,10 +19,12 @@ from bases.models import ClaseModelo, ClaseModelo2
 
 class Departamento(ClaseModelo):
     clavedepto = models.IntegerField(unique=True)
+    campus = models.CharField('Campus', max_length=100, blank=True, null=True)
+    direccionCampus = RichTextField('Dirección Campus', blank=True, null=True)
     departamento = models.CharField(max_length=200)
-    f001 = models.CharField('Formato1', max_length=60, blank=True, null=True)
-    f002 = models.CharField('Formato2', max_length=60, blank=True, null=True)
-    f003 = models.CharField('Formato3', max_length=60, blank=True, null=True)
+    f001 = models.CharField('Asimilados', max_length=60, blank=True, null=True)
+    f002 = models.CharField('Sueldos', max_length=60, blank=True, null=True)
+    f003 = models.CharField('Honorarios', max_length=60, blank=True, null=True)
     f004 = models.CharField('Formato4', max_length=60, blank=True, null=True)
     f005 = models.CharField('Formato5', max_length=60, blank=True, null=True)
     f006 = models.CharField('Formato6', max_length=60, blank=True, null=True)
@@ -85,40 +87,52 @@ class Departamento(ClaseModelo):
     class Meta:
         verbose_name_plural = "Departamentos"
 
-  
+class Regimen(ClaseModelo2):
+    claveRegimen = models.IntegerField('Clave del Régimen Fiscal', blank=True, null=True)
+    nombreRegimen = models.CharField('Nombre del Régimen Fiscal', max_length=150, blank=False, null=False)
+    aplicaFisica = models.BooleanField('Aplica Persona Física', default=False)
+    aplicaMoral = models.BooleanField('Aplica Persona Moral', default=False)
+    fechaInicio = models.DateField('Fecha de inicio',  blank=True, null=True)
+
+
+    def __str__(self):
+        return '{}'.format(self.nombreRegimen)
+
+    def save(self):
+        super(Regimen,self).save()
+
+    class Meta:
+        verbose_name_plural = "Regímenes Fiscales"
+        verbose_name="Régimen Fiscal"         
+
 class Partes(ClaseModelo2):
     codigo = models.CharField('Código', max_length=13, blank=True, null=True)
-    clave_depto = models.IntegerField('Clave de Depto.', null=True)
+    clavedepto = models.ForeignKey(Departamento, on_delete=models.CASCADE)
     fecha_ingreso = models.DateField('Fecha de ingreso', blank=True, null=True)
     email = models.EmailField('Correo electrónico', blank=True, null=True)
-    tituloParte = models.CharField('Título ', max_length=100, blank=True, null=True)
+    tituloParte = models.CharField('Título abreviado ', max_length=100, blank=True, null=True)
     nombreParte = models.CharField('Nombre o razón social ', max_length=200, blank=False, null=False)
     nombresParte = models.CharField('Nombres del contratante', max_length=100, blank=True, null=True)
-    apellidoPaternoParte = models.CharField('Apellido paterno', max_length=100, blank=True, null=True)
-    apellidoMaternoParte = models.CharField('Apellido materno', max_length=100, blank=True, null=True)
+    apellidoPaternoParte = models.CharField('Apellido 1', max_length=100, blank=True, null=True)
+    apellidoMaternoParte = models.CharField('Apellido 2', max_length=100, blank=True, null=True)
     lugarnacimientoParte = models.CharField('Lugar de nacimiento ', max_length=100, blank=True, null=True)
-    acta_nac_constimgParte = models.FileField('Acta de nacimiento', upload_to='media/', default = 'None/no-img.jpg')
     rfc = models.CharField('RFC', max_length=13, blank=True, null=True)
-    rfc_imgParte = models.FileField('Cédula del R.F.C', upload_to='media/', default = 'None/no-img.jpg')
     imss = models.CharField('IMSS', max_length=11, blank=True, null=True)
-    rimss_imgParte = models.FileField('Constancia IMSS', upload_to='media/', default = 'None/no-img.jpg')
     curp = models.CharField('CURP', max_length=18, blank=True, null=True)
-    curp_imgParte = models.FileField('CURP', upload_to='media/', default = 'None/no-img.jpg')
-    regfiscalParte = models.CharField('Régimen fiscal ', max_length=200, blank=True, null=True)
-    cedula_fiscalimgParte = models.FileField('Constancia Régimen fiscal', upload_to='media/', default = 'None/no-img.jpg')
+    ine = models.CharField('INE', max_length=18, blank=True, null=True)
+    banco = models.CharField('Banco', max_length=20, blank=True, null=True)
+    ctaBanco = models.CharField('Cuenta ', max_length=20, blank=True, null=True)
+    regfiscalParte =  models.ForeignKey(Regimen, on_delete=models.CASCADE, null=False)
     idrep_legalParte = models.IntegerField('id Representante legal', blank=True, null=True)
     datos_actaconstParte = RichTextField('Datos acta constitutiva', blank=True, null=True)
     titulo_profParte = models.CharField('Título profesional', max_length=100, blank=True, null=True)
-    titulo_profimgParte  = models.FileField('Título profesional', upload_to='media/', default = 'None/no-img.jpg')
     universidadParte =  models.CharField('Universidad', max_length=100, blank=True, null=True)
     cedula_profParte = models.CharField('Cédula profesional', max_length=100, blank=True, null=True)
-    cedula_profimgParte  = models.FileField('Cédula profesional', upload_to='media/', default = 'None/no-img.jpg')
     domicilioParte = RichTextField('Domicilio', blank=True, null=True)
-    comp_domimgParte  = models.FileField('Comprobante de domicilio', upload_to='media/', default = 'None/no-img.jpg')
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank = True, null = True)
     usuario = models.CharField('Usuario', max_length=50, blank=True, null=True)
     phone = models.CharField('Teléfono', max_length=13, blank=True, null=True)
-    mobile = models.CharField('Movil', max_length=13, blank=True, null=True)
+    mobile = models.CharField('Móvil', max_length=13, blank=True, null=True)
     grupo_sanguineo = models.CharField('Grupo sanguíneo', max_length=50, blank=True, null=True)
     alergias = models.CharField('Alergias', max_length=100, blank=True, null=True)
     
@@ -129,8 +143,8 @@ class Partes(ClaseModelo2):
         super(Partes,self).save()
 
     class Meta:
-        verbose_name_plural = "Parte del contrato"
-        verbose_name="Partes del contrato"
+        verbose_name_plural = "Partes del contrato"
+        verbose_name="Parte del contrato"
 
 class Ciclos(ClaseModelo2):
     descripcionCiclo = models.CharField('Descripción del ciclo', max_length=150, blank=False, null=False)
@@ -153,7 +167,23 @@ class Tipocontrato(ClaseModelo2):
     textoinicialContrato = RichTextField('Texto inicial del Contrato', blank=False, null=False)
     descripcionContrato = RichTextField('Descripción del Contrato', blank=True, null=True)
     marcatipoContrato = models.BooleanField(default=False)
-
+    docto01 = models.CharField('Documento 1', max_length=150, blank=True, null=True)
+    docto02 = models.CharField('Documento 2', max_length=150, blank=True, null=True)
+    docto03 = models.CharField('Documento 3', max_length=150, blank=True, null=True)
+    docto04 = models.CharField('Documento 4', max_length=150, blank=True, null=True)
+    docto05 = models.CharField('Documento 5', max_length=150, blank=True, null=True)
+    docto06 = models.CharField('Documento 6', max_length=150, blank=True, null=True)
+    docto07 = models.CharField('Documento 7', max_length=150, blank=True, null=True)
+    docto08 = models.CharField('Documento 8', max_length=150, blank=True, null=True)
+    docto09 = models.CharField('Documento 9', max_length=150, blank=True, null=True)
+    docto10 = models.CharField('Documento 10', max_length=150, blank=True, null=True)
+    docto11 = models.CharField('Documento 11', max_length=150, blank=True, null=True)
+    docto12 = models.CharField('Documento 12', max_length=150, blank=True, null=True)
+    docto13 = models.CharField('Documento 13', max_length=150, blank=True, null=True)
+    docto14 = models.CharField('Documento 14', max_length=150, blank=True, null=True)
+    docto15 = models.CharField('Documento 15', max_length=150, blank=True, null=True)
+    docto16 = models.CharField('Documento 16', max_length=150, blank=True, null=True)
+   
     def __str__(self):
         return '{}'.format(self.tipoContrato)
 
@@ -182,10 +212,41 @@ class Contratos(ClaseModelo2):
     importeContrato = MoneyField('Importe del Contrato', max_digits=14, decimal_places=2, blank=False, null=False, default_currency="MXN")
     npContrato = models.IntegerField('Número de pagos', blank=True, null=True)
     imppContrato = MoneyField('Importe de cada pago', max_digits=14, decimal_places=2, blank=False, null=False, default_currency="MXN")
+    vhppContrato = MoneyField('Valor Hora del Período', max_digits=14, decimal_places=2, blank=False, null=False, default_currency="MXN")
     totalhorasContrato = models.IntegerField('Número de pagos', blank=True, null=True)
     testigoContrato1 = models.CharField('Testigo 1', max_length=100, blank=True, null=True)
     testigoContrato2 = models.CharField('Testigo 2', max_length=100, blank=True, null=True)
     versionContrato = models.CharField('Versión del contrato', max_length=100, blank=True, null=True)
+    current_user = models.IntegerField('Usuario actual', blank=True, null=True)
+    status = models.CharField('Status de la solicitud', max_length=3, default ="CAP")
+    rcap = models.IntegerField('Resposable de Captura', blank=True, null=True)
+    fcap = models.DateTimeField('Fecha de Captura', blank=True, null=True)
+    rstep1 = models.IntegerField('Resposable step1', blank=True, null=True)
+    fstep1 = models.DateTimeField('Fecha step1', blank=True, null=True)
+    astep1 = models.CharField('Actividad step1', max_length=3, blank=True, null=True )
+    rstep2 = models.IntegerField('Resposable step2', blank=True, null=True)
+    fstep2 = models.DateTimeField('Fecha step2', blank=True, null=True)
+    astep2 = models.CharField('Actividad step2', max_length=3, blank=True, null=True )
+    rstep3 = models.IntegerField('Resposable step3', blank=True, null=True)
+    fstep3 = models.DateTimeField('Fecha step3', blank=True, null=True)       
+    astep3 = models.CharField('Actividad step3', max_length=3, blank=True, null=True )
+    rstep4 = models.IntegerField('Resposable step4', blank=True, null=True)
+    fstep4 = models.DateTimeField('Fecha step4', blank=True, null=True)
+    astep4 = models.CharField('Actividad step4', max_length=3, blank=True, null=True )
+    rstep5 = models.IntegerField('Resposable step5', blank=True, null=True)
+    fstep5 = models.DateTimeField('Fecha step5', blank=True, null=True)
+    astep5 = models.CharField('Actividad step5', max_length=3, blank=True, null=True )
+    rstep6 = models.IntegerField('Resposable step6', blank=True, null=True)
+    fstep6 = models.DateTimeField('Fecha step6', blank=True, null=True)
+    astep6 = models.CharField('Actividad step6', max_length=3, blank=True, null=True )
+    cstep1 = RichTextField('Comentarios 1', blank=True, null=True, default="")
+    cstep2 = RichTextField('Comentarios 2', blank=True, null=True, default="")
+    cstep3 = RichTextField('Comentarios 3', blank=True, null=True, default="")
+    cstep4 = RichTextField('Comentarios 4', blank=True, null=True, default="")
+    cstep5 = RichTextField('Comentarios 5', blank=True, null=True, default="")
+    cstep6 = RichTextField('Comentarios 6', blank=True, null=True, default="")
+    devuelto_por = models.IntegerField('Devuelto por', blank=True, null=True)
+    
 
     def __str__(self):
         return '{}'.format(self.id)
@@ -263,8 +324,7 @@ class Profesiones(ClaseModelo2):
 class Puestos(ClaseModelo2):
     nombrePuesto = models.CharField('Nombre Puesto', max_length=100, blank=False, null=False)
     claveCampus = models.CharField('Clave del Campus', max_length=3, blank=False, null=False)
-    impHora = MoneyField('Importe por Hora', max_digits=14, decimal_places=2, blank=False, null=False, default_currency="MXN")
-
+    
     def __str__(self):
         return '{}'.format(self.nombrePuesto)
 
@@ -273,4 +333,53 @@ class Puestos(ClaseModelo2):
 
     class Meta:
         verbose_name_plural = "Puestos"
-        verbose_name="Puesto"                                                                     
+        verbose_name="Puesto"   
+
+
+                                                             
+
+class Valida  (ClaseModelo2):
+    tipocontrato = models.ForeignKey(Tipocontrato, on_delete=models.CASCADE)
+    nombreCampo = models.CharField('Campo', max_length=50, blank=False, null=False)
+    nombreVariable = models.CharField('Variable', max_length=100, blank=False, null=False)
+    descVariable = RichTextField('Descripción de la variable', blank=True, null=True)
+    captura = models.BooleanField('Captura si/no', default=False)
+    indinum = models.BooleanField('Numérico', default=False)
+
+    def __str__(self):
+        return '{}'.format(self.tipocontrato)
+
+    def save(self):
+        super(Valida,self).save()
+
+    class Meta:
+        verbose_name_plural = "Validaciones"
+        verbose_name="Validación"    
+
+
+class Doctos(ClaseModelo2):
+    contrato = models.ForeignKey(Contratos, on_delete=models.CASCADE)
+    documento = models.CharField('Variable', max_length=150, blank=False, null=False)
+    pdf = models.FileField('Archivo del Documento', upload_to='media/', default = 'None/no-img.jpg')
+    vigenciaIniDocto = models.DateTimeField('Fecha del contrato', blank=True, null=True)
+    vigenciaFinDocto = models.DateTimeField('Fecha del contrato', blank=True, null=True)
+    comentarioDocto = RichTextField('Comentario del Documento', blank=True, null=True)
+    
+    def __str__(self):
+        return '{}'.format(self.tipocontrato)
+
+    def save(self):
+        super(Doctos,self).save()
+
+    class Meta:
+        verbose_name_plural = "Documentos"
+        verbose_name="Documento"
+    
+    #acta_nac_constimgParte = models.FileField('Acta de nacimiento', upload_to='media/', default = 'None/no-img.jpg')
+    #rfc_imgParte = models.FileField('Cédula del R.F.C', upload_to='media/', default = 'None/no-img.jpg')
+    #rimss_imgParte = models.FileField('Constancia IMSS', upload_to='media/', default = 'None/no-img.jpg')
+    #curp_imgParte = models.FileField('CURP', upload_to='media/', default = 'None/no-img.jpg')
+    #cedula_fiscalimgParte = models.FileField('Constancia Régimen fiscal', upload_to='media/', default = 'None/no-img.jpg')
+    #titulo_profimgParte  = models.FileField('Título profesional', upload_to='media/', default = 'None/no-img.jpg')
+    #cedula_profimgParte  = models.FileField('Cédula profesional', upload_to='media/', default = 'None/no-img.jpg')
+    #comp_domimgParte  = models.FileField('Comprobante de domicilio', upload_to='media/', default = 'None/no-img.jpg')

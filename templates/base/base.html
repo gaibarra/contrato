@@ -92,8 +92,8 @@
             {% if perms.cto.view_departamento %}
             <a class="collapse-item" href="{% url 'cto:departamento_list' %}">Departamentos</a>
             {% endif %}
-            {% if perms.cto.view_funcionario %}
-            <a class="collapse-item" href="{% url 'cto:departamento_list' %}">Funcionarios</a>
+            {% if perms.cto.view_partes %}
+            <a class="collapse-item" href="{% url 'cto:partes_list' %}">Funcionarios y empleados</a>
             {% endif %}
            
           </div>
@@ -107,9 +107,9 @@
         <div id="collapseCompras" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Contratos</h6>
-            <a class="collapse-item"  href="{% url 'cto:departamento_list' %}">Sol. de Pago y/o Reembolso</a>
-
-            
+            <a class="collapse-item"  href="{% url 'cto:departamento_list' %}">Sueldos</a>
+            <a class="collapse-item"  href="{% url 'cto:contrato_list' %}">Asimilados a salarios</a>
+            <a class="collapse-item"  href="{% url 'cto:departamento_list' %}">Honorarios</a>
           </div>
         </div>
       </li>

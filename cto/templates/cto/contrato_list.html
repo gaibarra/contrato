@@ -1,0 +1,147 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load formatags %}
+ 
+ {% block top_bar %}
+      
+      <h6 class="m-0 font-weight-bold text-primary">CONTRATOS </h6>
+             
+      <p class="m-0 font-weight-bold text-primary">  user: {{ user.username }} &nbsp;&nbsp; {{ user.last_name }} {{ user.first_name }} </p>
+  
+    {% for x in some_data %}
+      {% if x.user_id == user.id %}
+         <span class="m-0 font-weight-bold text-primary">  Clave Depto: &nbsp;&nbsp; {{ x.clave_depto }}</span>
+         {% for y in some_data2 %}
+             {% if y.clavedepto == x.clave_depto %}
+               
+                <span class="m-0 font-weight-bold text-primary"> - {{ y.departamento }}</span>
+                 
+             
+             {% endif %} 
+         {% endfor %}     
+      {% endif %}                      
+    {% endfor %} 
+   
+    
+ 
+ {% endblock top_bar %}
+
+
+
+
+{% block page_content %}
+<div class="card shadow mb-4">
+  <!-- Card Header - Dropdown -->
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+   
+      {% for item in obj %}
+        
+        {% for x in some_data %}
+           {% if x.user_id == item.astep1 %}
+              <a class="btn btn-secondary" href="{% url 'cto:departamento_list' %}"><i cass="far fa-calendar-plus"></i>REV {{x.usuario}}</a>
+           {% endif %}                      
+        {% endfor %} 
+               
+      {% endfor %} 
+
+      <!-- <div class="dropdown no-arrow">
+      <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+        <div class="dropdown-header">Acciones:</div>
+        <a class="dropdown-item" onclick="return abrir_modal('{% url 'cto:spyors_new' %}')" href="#"><i class="far fa-calendar-plus"></i> Nuevo</a>
+      </div>
+    </div> -->
+  </div>
+  <!-- Card Body -->
+  <div class="card-body">
+    {% if not obj %}
+    <div class="alert alert-info">No Hay Solicitudes</div>
+    {% endif %}
+    <div class="buttons-toolbar">
+        <a class="btn btn-primary" href="{% url 'cto:contrato_new' %}"><i cass="far fa-calendar-plus"></i>Nuevo Contrato</a>
+        
+    </div>
+
+    <table 
+      id="table"
+      data-locale="es-MX"
+      class="table table-sm"
+      data-toggle="table"
+      data-pagination="true"
+      data-search="true"
+     
+      data-show-columns="true"
+      data-show-toggle="true"
+      data-show-fullscreen="true"
+      data-toolbar=".buttons-toolbar"
+      
+    >
+    <thead>
+      <th data-sortable="true" data-field="id">No.</th>        
+      <th data-sortable="true" data-field="fecha_solicitud">Fecha Sol</th>
+      <th data-sortable="true" data-field="status">status</th>
+      <th data-sortable="true" data-field="beneficiario">Beneficiario</th>
+      <th data-sortable="true" data-field="imp_total">Importe</th>
+      <th data-sortable="true" data-field="comentarios">Descripción</th>
+      
+         <th data-sortable="true" data-field="numero_cheque">#Che</th>
+         <th data-sortable="true" data-field="fecha_cheque">Fecha Che</th>
+      
+      <th class="all">Detalle</th>
+      
+      
+      <th class="all">Editar</th>
+     
+    </thead>
+    <tbody>
+      {% for item in obj %}
+         
+
+        
+      
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.fecha_solicitud|date:'d-M-y'  }}</td>
+        <td>{{ item.status }}</td>
+        <td>{{ item.beneficiario }}</td>
+        <td>{{ item.imp_total }}</td>
+        <td>{{ item.comentarios }}</td>
+        <td>{{ item.numero_cheque }}</td>
+        <td>{{ item.fecha_cheque|date:'d-M-y'  }}</td>
+      
+        
+        <td>
+          <a href="{% url 'cto:spyors_edit' item.id %}" class="href btn btn-success btn-circle">
+              <i class="far fa-edit"></i>
+          </a>
+        </td>
+        <td>
+           {% if item.status == "CHE" %}
+          <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{% url 'cto:spyorenc_edit_che' item.id %}')"><i class="far fa-edit"></i></button>
+           {% else %}
+             {% if item.status != "PAG" and  item.status != "FIN" %}
+                <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{% url 'cto:spyorenc_edit' item.id %}')"><i class="far fa-edit"></i></button>
+             
+           
+              {% endif %}
+           {% endif %}                                         
+        </td>
+      </tr>
+       
+      {% endfor %}
+    </tbody>
+
+
+    </table>
+  </div>
+</div>
+{% endblock %}
+{% block js_page %}
+<script>
+
+</script>
+{% endblock %}
+
+

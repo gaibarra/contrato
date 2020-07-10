@@ -10,8 +10,13 @@ urlpatterns = [
     path('departamentos/<int:pk>',DepartamentoEdit.as_view(), name="departamento_edit"),
     path('departamentos/estado/<int:id>',departamentoInactivar, name="departamento_inactivar"),
     
-    
- 
+    path('partes/',PartesView.as_view(), name="partes_list"),
+    path('partes/new',PartesNew.as_view(), name="partes_new"),
+    path('partes/<int:pk>',PartesEdit.as_view(), name="partes_edit"),
+    path('partes/estado/<int:id>',partesInactivar, name="partes_inactivar"),
+
+    path('contratos/',ContratosView.as_view(), name="contrato_list"),
+    #path('contratos/new',ContratosNew.as_view(), name="contratos_new"),
     
 ]+ static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
 

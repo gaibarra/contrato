@@ -38,10 +38,44 @@ class PartesAdmin(ImportExportModelAdmin,admin.ModelAdmin):
 
 admin.site.register(Partes, PartesAdmin)
 
+class PuestosResource(resources.ModelResource):
+    class Meta:
+        model = Puestos
+
+class PuestosAdmin(ImportExportModelAdmin,admin.ModelAdmin):
+    search_fields = ['nombrePuesto']
+    list_display = ('nombrePuesto', 'claveCampus')
+    resource_class = PuestosResource
+
+admin.site.register(Puestos, PuestosAdmin)
+
+class ValidaResource(resources.ModelResource):
+    class Meta:
+        model = Valida
+
+class ValidaAdmin(ImportExportModelAdmin,admin.ModelAdmin):
+    search_fields = ['tipocontrato']
+    list_display = ('tipocontrato', 'nombreCampo', 'nombreVariable')
+    resource_class = ValidaResource
+
+admin.site.register(Valida, ValidaAdmin)
+
+class EstadosResource(resources.ModelResource):
+    class Meta:
+        model = Estados
+
+class EstadosAdmin(ImportExportModelAdmin,admin.ModelAdmin):
+    search_fields = ['nombreEstado']
+    list_display = ('nombreEstado', 'claveEstado')
+    resource_class = EstadosResource
+
+admin.site.register(Estados, EstadosAdmin)
+
 
 admin.site.register(Ciclos)
 admin.site.register(Tipocontrato)
 admin.site.register(Contratos)
-admin.site.register(Estados)
+
 admin.site.register(Niveles)
 admin.site.register(Profesiones)
+admin.site.register(Regimen)
