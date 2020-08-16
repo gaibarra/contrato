@@ -4,21 +4,16 @@
  
  {% block top_bar %}
       
-      <h6 class="m-0 font-weight-bold text-primary">CONTRATOS </h6>
+      <h6 class="m-0 font-weight-bold text-primary">CONTRATOS DE HONORARIOS ASIMILADOS A SALARIOS    </h6>
              
       <p class="m-0 font-weight-bold text-primary">  user: {{ user.username }} &nbsp;&nbsp; {{ user.last_name }} {{ user.first_name }} </p>
-  
+    
     {% for x in some_data %}
+      
       {% if x.user_id == user.id %}
-         <span class="m-0 font-weight-bold text-primary">  Clave Depto: &nbsp;&nbsp; {{ x.clave_depto }}</span>
-         {% for y in some_data2 %}
-             {% if y.clavedepto == x.clave_depto %}
-               
-                <span class="m-0 font-weight-bold text-primary"> - {{ y.departamento }}</span>
-                 
-             
-             {% endif %} 
-         {% endfor %}     
+     
+         <span class="m-0 font-weight-bold text-primary">  Depto: &nbsp;&nbsp; {{ x.claveDepartamento }}</span>
+        
       {% endif %}                      
     {% endfor %} 
    
@@ -50,19 +45,20 @@
       </a>
       <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
         <div class="dropdown-header">Acciones:</div>
-        <a class="dropdown-item" onclick="return abrir_modal('{% url 'cto:spyors_new' %}')" href="#"><i class="far fa-calendar-plus"></i> Nuevo</a>
+        <a class="dropdown-item" onclick="return abrir_modal('{% url 'cto:departamento_list' %}')" href="#"><i class="far fa-calendar-plus"></i> Nuevo</a>
       </div>
     </div> -->
   </div>
   <!-- Card Body -->
   <div class="card-body">
     {% if not obj %}
-    <div class="alert alert-info">No Hay Solicitudes</div>
+    <div class="alert alert-info">No Hay Contratos</div>
     {% endif %}
     <div class="buttons-toolbar">
         <a class="btn btn-primary" href="{% url 'cto:contrato_new' %}"><i cass="far fa-calendar-plus"></i>Nuevo Contrato</a>
         
     </div>
+
 
     <table 
       id="table"
@@ -79,15 +75,9 @@
       
     >
     <thead>
-      <th data-sortable="true" data-field="id">No.</th>        
-      <th data-sortable="true" data-field="fecha_solicitud">Fecha Sol</th>
-      <th data-sortable="true" data-field="status">status</th>
-      <th data-sortable="true" data-field="beneficiario">Beneficiario</th>
-      <th data-sortable="true" data-field="imp_total">Importe</th>
-      <th data-sortable="true" data-field="comentarios">Descripción</th>
-      
-         <th data-sortable="true" data-field="numero_cheque">#Che</th>
-         <th data-sortable="true" data-field="fecha_cheque">Fecha Che</th>
+      <th data-sortable="true" data-field="id">Folio</th>        
+      <th data-sortable="true" data-field="tipocontrato">Tipo de Contrato</th>
+      <th data-sortable="true" data-field="parte2">Sujeto del contrato</th>
       
       <th class="all">Detalle</th>
       
@@ -103,30 +93,24 @@
       
       <tr>
         <td>{{ item.id }}</td>
-        <td>{{ item.fecha_solicitud|date:'d-M-y'  }}</td>
-        <td>{{ item.status }}</td>
-        <td>{{ item.beneficiario }}</td>
-        <td>{{ item.imp_total }}</td>
-        <td>{{ item.comentarios }}</td>
-        <td>{{ item.numero_cheque }}</td>
-        <td>{{ item.fecha_cheque|date:'d-M-y'  }}</td>
+        <td>{{ item.tipocontrato }}</td>
+        <td>{{ item.parte2 }}</td>
       
         
         <td>
-          <a href="{% url 'cto:spyors_edit' item.id %}" class="href btn btn-success btn-circle">
+          <a href="{% url 'cto:contrato_edit' item.id %}" class="href btn btn-success btn-circle">
               <i class="far fa-edit"></i>
           </a>
         </td>
         <td>
-           {% if item.status == "CHE" %}
-          <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{% url 'cto:spyorenc_edit_che' item.id %}')"><i class="far fa-edit"></i></button>
-           {% else %}
+           
+           
              {% if item.status != "PAG" and  item.status != "FIN" %}
-                <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{% url 'cto:spyorenc_edit' item.id %}')"><i class="far fa-edit"></i></button>
+                <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{% url 'cto:contrato_edit' item.id %}')"><i class="far fa-edit"></i></button>
              
            
               {% endif %}
-           {% endif %}                                         
+                                              
         </td>
       </tr>
        

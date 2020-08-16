@@ -1,17 +1,28 @@
-from django.shortcuts import render, redirect
-from django.views import generic
+from django.shortcuts import render,redirect, get_list_or_404
+from django.views import generic 
+from django.views.generic import TemplateView, ListView, CreateView
+from django.contrib.messages.views import SuccessMessageMixin
+
 from django.urls import reverse_lazy
-from django.contrib import messages
-from django.db.models import Q
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import User               
 from django.http import HttpResponse
 from datetime import datetime, date
-from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth.decorators import login_required, permission_required
-
-from .models import Departamento, Partes, Contratos, Doctos
-from .forms import DepartamentoForm, PartesForm
-
+from django.contrib import messages
+from django.db.models import Q
+from django.contrib.auth import authenticate
 from bases.views import SinPrivilegios
+from bases.views import *
+from .models import Departamento, Partes, Contratos, Doctos, Tipocontrato, Requisitos
+from .forms import DepartamentoForm, PartesForm, ContratosForm
+from bases.views import SinPrivilegios
+from django.core.files.storage import FileSystemStorage
+
+
+
+
+
+
 
 
 
@@ -24,8 +35,6 @@ class VistaBaseCreate(SuccessMessageMixin,SinPrivilegios,generic.CreateView):
         return super().form_valid(form)
 
 
-
-# Vista generica para actualizar registros
 
 
 class VistaBaseEdit(SuccessMessageMixin,SinPrivilegios, generic.UpdateView):
@@ -122,9 +131,10 @@ class ContratosView(SinPrivilegios, generic.ListView):
         current_userx = self.request.user.id
         #conditions = dict(current_user=current_userx, uc_id=self.request.user) 
         #queryset = queryset.filter(**conditions)
-        return Contratos.objects.filter(
-            Q(current_user=current_userx) | Q(uc_id=self.request.user)
-        )
+        return Contratos.objects.all()
+        #return Contratos.objects.filter(
+        #    Q(current_user=current_userx) | Q(uc_id=self.request.user)
+        #)
         #return SpyorEnc.objects.filter(
         #    Q(current_user=current_userx) | Q(uc_id=self.request.user) | Q(el_jefe=current_userx)
         #)
@@ -144,25 +154,32 @@ class ContratosView(SinPrivilegios, generic.ListView):
 @permission_required('cto.add_contratos', login_url='bases:sin_privilegios')
 def contratos2(request,contrato_id=None):
     
-    template_name='cto/contratos.html'
+    template_name='cto/contrato.html'
     detalle = {}
     secuencia_data = {}
     xUsuario = (request.user.id)
     print(xUsuario)
-    partes =Partes.objects.filter(estado=True)
-    partes2 = Partes.objects.filter(estado=True, user=xUsuario)    
-    p=partes2.first()
-    d1 = p.clavedepto
+   
+    partes = Partes.objects.filter(estado=True, user=xUsuario)    
+    partes2 =Partes.objects.filter(estado=True)
+    partes2 =Partes.objects.order_by('nombreParte')
+    print (partes2)
+    p=partes.first()
+    print (p)
+    
+    
+    d1 = p.claveDepartamento
+    dx = p.claveDepartamento_id
     rfcparte = (p.rfc)
     print(rfcparte)
-    print (p)
+    
     print(d1)
    
-   
-    departamentos =Departamento.objects.filter(estado=True, clavedepto=d1)
+    requisitos = Requisitos.objects.filter(estado=True)
+    departamentos =Departamento.objects.filter(estado=True, claveDepartamento=dx)
     departamentos2 =Departamento.objects.filter(estado=True)
     d2=departamentos.first()
-    d3= (d2.departamento)
+    d3= (d2.claveDepartamento)
     
     secuencia = (d2.f001)
 
@@ -177,8 +194,8 @@ def contratos2(request,contrato_id=None):
     
         r2 = int(secuencia[8:13])
         f2 = secuencia[13:16]
-    
-        if f1 == 'AUT':    
+        
+        if f1 == 'DIC':    
             funcionario =Partes.objects.filter( user_id=r1)
         else:
             funcionario =Partes.objects.filter( user_id=r2)
@@ -218,27 +235,27 @@ def contratos2(request,contrato_id=None):
 
     
     if request.method == "GET":
-        enc = Contratos.objects.filter(pk=id).first()
+        enc = Contratos.objects.filter(pk=contrato_id).first()
         if not enc:
             encabezado = {
                 'id':"",
                 'uc_id':"",
-                'tipocontrato':"",
-                'datecontrato':" ",
-                'datecontrato_ini':" ",
-                'datecontrato_fin':" ",
-                'parte1':"",
-                'enCalidadDe1':"",
+                'tipocontrato':1,
+                'datecontrato':datetime.today(),
+                'datecontrato_ini':"",
+                'datecontrato_fin':"",
+                'parte1':546,
+                'enCalidadDe1':"'CLIENTE '",
                 'parte2':"",
-                'enCalidadDe2':"",
+                'enCalidadDe2':"'PRESTADOR DE SERVICIOS '",
                 'lugarContrato':"",
-                'ciudadContrato':"",
-                'estadoContrato':"",
-                'paisContrato':"",  
+                'ciudadContrato':"Mérida",
+                'estadoContrato':"Yucatán",
+                'paisContrato':"México",  
                 'importeContrato':0.00,
                 'npContrato':"",
                 'imppContrato':0.00,
-                'vhppContrato':0.00,
+                'vhppContrato':285.00,
                 'totalhorasContrato':"",
                 'testigoContrato1':"",
                 'testigoContrato2':"",
@@ -323,42 +340,70 @@ def contratos2(request,contrato_id=None):
         
         detalle=Doctos.objects.filter(contrato=enc)
        
-        contexto = {"fun2":partes2,"enc":encabezado,"det":detalle,"departamentos":departamentos,"funcionarios":partes,"departamentos2":departamentos2,}
+        contexto = {"requi":requisitos,"fun":funcionario,"fun2":partes2,"enc":encabezado,"det":detalle,"departamentos":departamentos,"funcionarios":partes,"departamentos2":departamentos2,}
         
         return render(request,template_name,contexto)
     
    
     
     if request.method == "POST":
-        tipocontrato = request.POST.get("enc_beneficiario")
+        
+        tipocontrato=1
         datecontrato  = request.POST.get("datecontrato")
-        datecontrato_ini  = request.POST.get("datecontrato_ini")
-        datecontrato_fin  = request.POST.get("datecontrato_fin")
-        parte1 = request.POST.get("parte1")
-        enCalidadDe1 = request.POST.get("enCalidadDe1")
-        parte2 = request.POST.get("parte2")
-        enCalidadDe2 = request.POST.get("enCalidadDe2")
+        datecontrato_ini  = request.POST.get("enc_datecontrato_ini")
+        datecontrato_fin  = request.POST.get("enc_datecontrato_fin")
+        
+        parte1 = 546
+        parte2 = request.POST.get("enc_nombreParte")
+
+        enCalidadDe1 = "'CLIENTE '"
+        enCalidadDe2 = "'PRESTADOR DE SERVICIOS '"        
+        
         lugarContrato = request.POST.get("lugarContrato")
-        ciudadContrato = request.POST.get("ciudadContrato")
-        estadoContrato = request.POST.get("estadoContrato")
-        paisContrato = request.POST.get("paisContrato")
-        importeContrato = request.POST.get("importeContrato")
-        npContrato = request.POST.get("npContrato")
-        imppContrato = request.POST.get("imppContrato")
-        vhppContrato = request.POST.get("vhppContrato")
-        totalhorasContrato = request.POST.get("totalhorasContrato")
-        testigoContrato1 = request.POST.get("testigoContrato1")
-        testigoContrato2 = request.POST.get("testigoContrato2")
+        ciudadContrato = "Mérida"
+        estadoContrato = "Yucatán"
+        paisContrato = "México"
+        importeContrato = request.POST.get("enc_importeContrato")
+        npContrato = request.POST.get("enc_npContrato")
+        imppContrato = request.POST.get("enc_imppContrato")
+        vhppContrato = 285
+        totalhorasContrato = request.POST.get("enc_totalhorasContrato")
+        testigoContrato1 = request.POST.get("enc_testigoContrato1")
+        testigoContrato2 = request.POST.get("enc_testigoContrato2")
         versionContrato = request.POST.get("versionContrato")
         status = request.POST.get("status")
        
         fun=Partes.objects.get(pk=a3)
+        tip=Tipocontrato.objects.get(pk=1)
+        
+        if parte2:
+         suj=Partes.objects.get(pk=parte2)
         
 
         if not contrato_id:
             enc = Contratos(
-                              
+                tipocontrato = tip,
+                datecontrato  = datecontrato,
+                datecontrato_ini  = datecontrato_ini,
+                datecontrato_fin  = datecontrato_fin,
                 
+                parte1 = parte1,
+                parte2 = suj,
+                ciudadContrato = ciudadContrato,
+                estadoContrato = estadoContrato,
+                paisContrato = paisContrato,
+                              
+                enCalidadDe1 = enCalidadDe1,
+                enCalidadDe2 = enCalidadDe2,
+
+                importeContrato = importeContrato,
+                npContrato = npContrato,
+                imppContrato = imppContrato,
+                vhppContrato = vhppContrato,
+                totalhorasContrato = totalhorasContrato,
+                testigoContrato1 = testigoContrato1,
+                testigoContrato2 = testigoContrato2,
+
                 status = status,
                 rcap = xUsuario,
                 current_user = xUsuario,
@@ -389,42 +434,61 @@ def contratos2(request,contrato_id=None):
                 enc.save()
                 
         if not id:
-            messages.error(request,'No Puedo Continuar No Pude Detectar No. de Conrato')
+            messages.error(request,'No Puedo Continuar No Pude Detectar No. de Contrato')
             return redirect("cto:contrato_list")
         
+        documento = request.POST.get("documento")
+        comentarioDocto = request.POST.get("comentarioDocto")
+        req = Requisitos.objects.get(pk=documento)
+        vigenciaFinDocto = request.POST.get("enc_vigenciaFinDocto")
         
-
-        tipo_comprobante = request.POST.get("tipo_comprobante")
-        no_facturasol = request.POST.get("no_facturasol")
-        fecha_compra = request.POST.get("fecha_compra")
-        importe = request.POST.get("importe")
-        descripcion = request.POST.get("descripcion")
-        departamento = request.POST.get("departamento")
-        dep=Departamento.objects.get(pk=departamento)
-        #imagen= request.POST.get('imagen')
-
-
-
-
-
-        #func = Funcionario.objects.get(codigo=Funcionario.codigo)
+        pdf= request.POST.get('pdf2')
         
-        det = Doctos(
-            solicitud=enc,
-            tipo_comprobante=tipo_comprobante,
-            no_facturasol=no_facturasol,
-            fecha_compra=fecha_compra,
-            importe=importe,
-            departamento=dep,
-            descripcion=descripcion,
-            #imagen=imagen,
+        uploaded_file = request.FILES['pdf']
+        print(uploaded_file)
             
-        )
+        fs = FileSystemStorage()
+        print(fs)
+        name = fs.save(uploaded_file.name, uploaded_file)
+        print(name)
+        pdf = name
+
+        if vigenciaFinDocto != "":
+        
+            det = Doctos(
+                contrato=enc,
+                documento=req,
+                comentarioDocto=comentarioDocto,
+                pdf=pdf,
+                vigenciaFinDocto=vigenciaFinDocto,
+            
+            )
+        
+        if vigenciaFinDocto == "":
+            
+            det = Doctos(
+                contrato=enc,
+                documento=req,
+                comentarioDocto=comentarioDocto,
+                pdf=pdf,
+              
+            
+            )
         
         if det:
             det.save()
             
         
-            return redirect("dto:spyors_edit",contrato_id=contrato_id)
+            return redirect("cto:contrato_edit",contrato_id=contrato_id)
 
     return render(request,template_name,contexto)
+
+class ContratosEdit(VistaBaseEdit):
+        model = Contratos
+        template_name="cto/contrato_form.html"
+        form_class = ContratosForm
+        success_url= reverse_lazy('cto:contrato_list')
+        permission_required="cto.change_contratos"
+        context_object_name = 'obj'
+
+         

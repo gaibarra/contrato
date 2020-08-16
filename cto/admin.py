@@ -19,10 +19,11 @@ admin.site.register(Secuencia, SecuenciaAdmin)
 class DepartamentoResource(resources.ModelResource):
     class Meta:
         model = Departamento
+        import_id_fields = ('claveDepartamento',)
 
 class DepartamentoAdmin(ImportExportModelAdmin,admin.ModelAdmin):
-    search_fields = ['departamento']
-    list_display = ('clavedepto', 'departamento')
+    search_fields = ['claveDepartamento']
+    list_display = ('claveDepartamento', 'nombreDepartamento')
     resource_class = DepartamentoResource
 
 admin.site.register(Departamento, DepartamentoAdmin)
@@ -30,10 +31,10 @@ admin.site.register(Departamento, DepartamentoAdmin)
 class PartesResource(resources.ModelResource):
     class Meta:
         model = Partes
-
+      
 class PartesAdmin(ImportExportModelAdmin,admin.ModelAdmin):
-    search_fields = ['nombreParte']
-    list_display = ('nombreParte','nombresParte', 'apellidoPaternoParte', 'apellidoMaternoParte' )
+    search_fields = ['nombreParte' ]
+    list_display = ('nombreParte','claveDepartamento','nombresParte', 'apellidoPaternoParte', 'apellidoMaternoParte' )
     resource_class = PartesResource
 
 admin.site.register(Partes, PartesAdmin)
@@ -71,7 +72,35 @@ class EstadosAdmin(ImportExportModelAdmin,admin.ModelAdmin):
 
 admin.site.register(Estados, EstadosAdmin)
 
+class RequisitosResource(resources.ModelResource):
+    class Meta:
+        model = Requisitos
 
+class RequisitosAdmin(ImportExportModelAdmin,admin.ModelAdmin):
+    search_fields = ['requisito']
+    list_display = ('tipocontrato', 'requisito')
+    resource_class = RequisitosResource
+
+admin.site.register(Requisitos, RequisitosAdmin)
+
+
+
+class AreaResource(resources.ModelResource):
+    class Meta:
+        model = Area
+
+class AreaAdmin(ImportExportModelAdmin,admin.ModelAdmin):
+    search_fields = ['nombreArea']
+    list_display = ('nombreArea', 'idArea')
+    resource_class = AreaResource
+
+admin.site.register(Area, AreaAdmin)
+
+
+
+
+
+admin.site.register(Campus)
 admin.site.register(Ciclos)
 admin.site.register(Tipocontrato)
 admin.site.register(Contratos)

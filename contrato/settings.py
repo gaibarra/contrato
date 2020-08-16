@@ -57,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_userforeignkey.middleware.UserForeignKeyMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'contrato.urls'
@@ -168,3 +170,7 @@ INTERNAL_IPS = [
     '127.0.0.1',
     # ...
 ]
+
+LES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+

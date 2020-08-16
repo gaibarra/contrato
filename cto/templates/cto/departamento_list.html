@@ -36,16 +36,16 @@
       data-locale="es-MX"
     >
       <thead>
-          <th data-sortable="true" data-field="clavedepto">Clave</th>
-          <th data-sortable="true" data-field="departamento">Departamento</th>
+          <th data-sortable="true" data-field="claveDepartamento">Clave</th>
+          <th data-sortable="true" data-field="nombreDepartamento">Departamento</th>
           <th data-field="estado">Estado</th>
           <th class="all">Acciones</th>  
       </thead>
       <tbody>
         {% for item in obj%}
         <tr>
-          <td>{{ item.clavedepto }}</td>
-          <td>{{ item.departamento }}</td>
+          <td>{{ item.claveDepartamento }}</td>
+          <td>{{ item.nombreDepartamento }}</td>
           <td >{#item.estado|yesno:"Activo,Inactivo"#}
             <div onclick="inactivar({{item.id}})">
                 {% if item.estado %}

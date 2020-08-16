@@ -37,7 +37,7 @@ def view_1(request):
     # ...
     t = loader.get_template('cto/contratos.html')
     c = Context({
-        'app': 'dto',
+        'app': 'cto',
         'user': request.user,
         'ip_address': request.META['REMOTE_ADDR'],
         'message': 'I am view 1.'

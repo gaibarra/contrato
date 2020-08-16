@@ -2,6 +2,8 @@ from django.db import models
 
 from django.contrib.auth.models import User
 from django_userforeignkey.models.fields import UserForeignKey
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.decorators import login_required, permission_required
 
 
 class ClaseModelo(models.Model):

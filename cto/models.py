@@ -14,14 +14,52 @@ from django.db.models import Sum
 
 from bases.models import ClaseModelo, ClaseModelo2
 
+class Campus(ClaseModelo2):
+    claveCampus =  models.CharField('Clave Campus', max_length=3, blank=False, null=False, unique=True) 
+    nombreCampus =  models.CharField('Nombre Campus', max_length=150, blank=False, null=False) 
+    direccionCampus = models.CharField('Dirección Fiscal Campus', max_length=200, blank=False, null=False)
+    directorCampus =  models.CharField('Director Campus', max_length=150, blank=False, null=False)
+    telefonoCampus  = models.CharField('Telefono Campus', max_length=13, blank=True, null=True)
+    rdMin = models.IntegerField()
+    rdMax = models.IntegerField()
+    
+    def __str__(self):
+        
+        return self.claveCampus
+
+    def save(self):
+        self.nombreCampus = self.nombreCampus.upper()
+        super(Campus, self).save()
+
+    class Meta:
+        verbose_name_plural = "Campus"
+        verbose_name="Campus"
+
+class Area(ClaseModelo2):
+    idArea =  models.CharField('Clave Área', max_length=3, blank=False, null=False, unique=True) 
+    nombreArea =  models.CharField('Nombre Área', max_length=150, blank=False, null=False) 
+    claveCampus = models.ForeignKey(Campus, on_delete=models.CASCADE)
+    responsableArea =  models.CharField('Responsable Área', max_length=150, blank=False, null=False)
+    
+    
+    def __str__(self):
+        
+        return self.idArea
+
+    def save(self):
+        self.nombreArea = self.nombreArea.upper()
+        super(Area, self).save()
+
+    class Meta:
+        verbose_name_plural = "Áreas"
+        verbose_name="Área"
 
 
-
-class Departamento(ClaseModelo):
-    clavedepto = models.IntegerField(unique=True)
-    campus = models.CharField('Campus', max_length=100, blank=True, null=True)
-    direccionCampus = RichTextField('Dirección Campus', blank=True, null=True)
-    departamento = models.CharField(max_length=200)
+class Departamento(ClaseModelo2):
+    claveDepartamento = models.CharField('Clave Departamento', max_length=4, blank=False, null=False, unique=True, default="")
+    claveCampus = models.ForeignKey(Campus, on_delete=models.CASCADE, default="")
+    claveArea = models.ForeignKey(Area, on_delete=models.CASCADE, default="")
+    nombreDepartamento = models.CharField(max_length=200)
     f001 = models.CharField('Asimilados', max_length=60, blank=True, null=True)
     f002 = models.CharField('Sueldos', max_length=60, blank=True, null=True)
     f003 = models.CharField('Honorarios', max_length=60, blank=True, null=True)
@@ -72,20 +110,36 @@ class Departamento(ClaseModelo):
     f048 = models.CharField('Formato48', max_length=60, blank=True, null=True)
     f049 = models.CharField('Formato49', max_length=60, blank=True, null=True)
     f050 = models.CharField('Formato50', max_length=60, blank=True, null=True)
-    departamento2 = models.CharField(max_length=200, default="")
+    
 
 
 
     def __str__(self):
-        
-        return self.departamento
+        return '{}'.format(self.nombreDepartamento)
 
     def save(self):
-        self.departamento = self.departamento.upper()
+        self.nombreDepartamento = self.nombreDepartamento.upper()
         super(Departamento, self).save()
 
     class Meta:
         verbose_name_plural = "Departamentos"
+        verbose_name="Departamento"
+
+class Puestos(ClaseModelo2):
+    nombrePuesto = models.CharField('Nombre Puesto', max_length=100, blank=False, null=False)
+    claveCampus = models.CharField('Clave del Campus', max_length=3, blank=False, null=False)
+    
+    def __str__(self):
+        return '{}'.format(self.nombrePuesto)
+
+    def save(self):
+        super(Puestos,self).save()
+
+    class Meta:
+        verbose_name_plural = "Puestos"
+        verbose_name="Puesto"   
+
+
 
 class Regimen(ClaseModelo2):
     claveRegimen = models.IntegerField('Clave del Régimen Fiscal', blank=True, null=True)
@@ -106,8 +160,9 @@ class Regimen(ClaseModelo2):
         verbose_name="Régimen Fiscal"         
 
 class Partes(ClaseModelo2):
+    claveDepartamento = models.ForeignKey(Departamento, on_delete=models.CASCADE, to_field='claveDepartamento', default="")
     codigo = models.CharField('Código', max_length=13, blank=True, null=True)
-    clavedepto = models.ForeignKey(Departamento, on_delete=models.CASCADE)
+    clavePuesto = models.ForeignKey(Puestos, on_delete=models.CASCADE, blank=True, null=True, default="" )
     fecha_ingreso = models.DateField('Fecha de ingreso', blank=True, null=True)
     email = models.EmailField('Correo electrónico', blank=True, null=True)
     tituloParte = models.CharField('Título abreviado ', max_length=100, blank=True, null=True)
@@ -116,7 +171,7 @@ class Partes(ClaseModelo2):
     apellidoPaternoParte = models.CharField('Apellido 1', max_length=100, blank=True, null=True)
     apellidoMaternoParte = models.CharField('Apellido 2', max_length=100, blank=True, null=True)
     lugarnacimientoParte = models.CharField('Lugar de nacimiento ', max_length=100, blank=True, null=True)
-    rfc = models.CharField('RFC', max_length=13, blank=True, null=True)
+    rfc = models.CharField('RFC', max_length=14, blank=True, null=True)
     imss = models.CharField('IMSS', max_length=11, blank=True, null=True)
     curp = models.CharField('CURP', max_length=18, blank=True, null=True)
     ine = models.CharField('INE', max_length=18, blank=True, null=True)
@@ -131,13 +186,15 @@ class Partes(ClaseModelo2):
     domicilioParte = RichTextField('Domicilio', blank=True, null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank = True, null = True)
     usuario = models.CharField('Usuario', max_length=50, blank=True, null=True)
-    phone = models.CharField('Teléfono', max_length=13, blank=True, null=True)
-    mobile = models.CharField('Móvil', max_length=13, blank=True, null=True)
-    grupo_sanguineo = models.CharField('Grupo sanguíneo', max_length=50, blank=True, null=True)
+    phone = models.CharField('Teléfono', max_length=15, blank=True, null=True)
+    mobile = models.CharField('Móvil', max_length=15, blank=True, null=True)
+    grupo_sanguineo = models.CharField('Grupo sanguíneo', max_length=40, blank=True, null=True)
     alergias = models.CharField('Alergias', max_length=100, blank=True, null=True)
+    salarioDiario = models.FloatField('Salario Diario', blank=True, null=True)
+    
     
     def __str__(self):
-        return '{}'.format(self.id)
+        return '{}'.format(self.nombreParte)
 
     def save(self):
         super(Partes,self).save()
@@ -167,22 +224,7 @@ class Tipocontrato(ClaseModelo2):
     textoinicialContrato = RichTextField('Texto inicial del Contrato', blank=False, null=False)
     descripcionContrato = RichTextField('Descripción del Contrato', blank=True, null=True)
     marcatipoContrato = models.BooleanField(default=False)
-    docto01 = models.CharField('Documento 1', max_length=150, blank=True, null=True)
-    docto02 = models.CharField('Documento 2', max_length=150, blank=True, null=True)
-    docto03 = models.CharField('Documento 3', max_length=150, blank=True, null=True)
-    docto04 = models.CharField('Documento 4', max_length=150, blank=True, null=True)
-    docto05 = models.CharField('Documento 5', max_length=150, blank=True, null=True)
-    docto06 = models.CharField('Documento 6', max_length=150, blank=True, null=True)
-    docto07 = models.CharField('Documento 7', max_length=150, blank=True, null=True)
-    docto08 = models.CharField('Documento 8', max_length=150, blank=True, null=True)
-    docto09 = models.CharField('Documento 9', max_length=150, blank=True, null=True)
-    docto10 = models.CharField('Documento 10', max_length=150, blank=True, null=True)
-    docto11 = models.CharField('Documento 11', max_length=150, blank=True, null=True)
-    docto12 = models.CharField('Documento 12', max_length=150, blank=True, null=True)
-    docto13 = models.CharField('Documento 13', max_length=150, blank=True, null=True)
-    docto14 = models.CharField('Documento 14', max_length=150, blank=True, null=True)
-    docto15 = models.CharField('Documento 15', max_length=150, blank=True, null=True)
-    docto16 = models.CharField('Documento 16', max_length=150, blank=True, null=True)
+    
    
     def __str__(self):
         return '{}'.format(self.tipoContrato)
@@ -194,6 +236,21 @@ class Tipocontrato(ClaseModelo2):
         verbose_name_plural = "Tipos de contrato"
         verbose_name="Tipo de contrato"
 
+class Requisitos(ClaseModelo2):
+    tipocontrato = models.ForeignKey(Tipocontrato, on_delete=models.CASCADE)
+    requisito = models.CharField('Documento', max_length=150, blank=False, null=False)
+    coment_req = RichTextField('Descripción', blank=True, null=True)
+    indiya =  models.BooleanField('Entregado', default=False)
+    
+    def __str__(self):
+        return '{}'.format(self.requisito)
+
+    def save(self):
+        super(Requisitos,self).save()
+
+    class Meta:
+        verbose_name_plural = "Requisitos"
+        verbose_name="Requisito"
 class Contratos(ClaseModelo2):
     tipocontrato = models.ForeignKey(Tipocontrato, on_delete=models.CASCADE)
     datecontrato = models.DateTimeField('Fecha del contrato', blank=True, null=True)
@@ -253,6 +310,7 @@ class Contratos(ClaseModelo2):
 
     def save(self):
         super(Contratos,self).save()
+
 
     class Meta:
         verbose_name_plural = "Contratos"
@@ -321,19 +379,7 @@ class Profesiones(ClaseModelo2):
         verbose_name="Profesión"
 
 
-class Puestos(ClaseModelo2):
-    nombrePuesto = models.CharField('Nombre Puesto', max_length=100, blank=False, null=False)
-    claveCampus = models.CharField('Clave del Campus', max_length=3, blank=False, null=False)
-    
-    def __str__(self):
-        return '{}'.format(self.nombrePuesto)
 
-    def save(self):
-        super(Puestos,self).save()
-
-    class Meta:
-        verbose_name_plural = "Puestos"
-        verbose_name="Puesto"   
 
 
                                                              
@@ -359,17 +405,21 @@ class Valida  (ClaseModelo2):
 
 class Doctos(ClaseModelo2):
     contrato = models.ForeignKey(Contratos, on_delete=models.CASCADE)
-    documento = models.CharField('Variable', max_length=150, blank=False, null=False)
+    documento = models.ForeignKey(Requisitos, on_delete=models.CASCADE)
     pdf = models.FileField('Archivo del Documento', upload_to='media/', default = 'None/no-img.jpg')
-    vigenciaIniDocto = models.DateTimeField('Fecha del contrato', blank=True, null=True)
-    vigenciaFinDocto = models.DateTimeField('Fecha del contrato', blank=True, null=True)
+    pdf2 = models.FileField('Archivo del Documento', upload_to='media/', default = 'None/no-img.jpg')
+    vigenciaFinDocto = models.DateTimeField('Vigencia del documento', blank=True, null=True)
     comentarioDocto = RichTextField('Comentario del Documento', blank=True, null=True)
     
     def __str__(self):
-        return '{}'.format(self.tipocontrato)
+        return '{}'.format(self.contrato)
 
     def save(self):
         super(Doctos,self).save()
+    
+    def delete(self, *args, **kwargs):
+        self.pdf.delete()
+        super().delete(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Documentos"
