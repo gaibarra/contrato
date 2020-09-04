@@ -23,7 +23,8 @@
    <!-- Custom styles for this page -->
   
   
-  <link href="{% static 'base/vendor/datatables/dataTables.bootstrap4.min.css'%}" rel="stylesheet"> 
+  <!--<link href="{% static 'base/vendor/datatables/dataTables.bootstrap4.min.css'%}" rel="stylesheet"> -->  
+  <link rel="stylesheet" href="https://bootswatch.com/4/journal/bootstrap.min.css">
   <link href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css" rel="stylesheet"
   
    <!-- jQuery Confirm -->
@@ -102,18 +103,33 @@
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCompras" aria-expanded="true" aria-controls="collapseCompras">
           <i class="fas fa-fw fa-truck"></i>
-          <span>Contratos</span>
+          <span>Asimilados</span>
         </a>
         <div id="collapseCompras" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Contratos</h6>
-            <a class="collapse-item"  href="{% url 'cto:departamento_list' %}">Sueldos</a>
+            <h6 class="collapse-header">Asimilados</h6>
+            
             <a class="collapse-item"  href="{% url 'cto:contrato_list' %}">Asimilados a salarios</a>
-            <a class="collapse-item"  href="{% url 'cto:departamento_list' %}">Honorarios</a>
+            
           </div>
         </div>
       </li>
-
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCompras" aria-expanded="true" aria-controls="collapseCompras">
+          <i class="fas fa-fw fa-truck"></i>
+          <span>Sueldos de docentes</span>
+        </a>
+        <div id="collapseCompras" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Sueldos de docentes</h6>
+            
+            <a class="collapse-item"  href="{% url 'cto:contrato_list' %}">Reconocimiento de antiguedad, tiempo indeterminado y prestaciones MODELO</a>
+            <a class="collapse-item"  href="{% url 'cto:contrato_list' %}">Tiempo determinado y prestaciones MODELO</a>
+            <a class="collapse-item"  href="{% url 'cto:contrato_list' %}">Tiempo determinado y prestaciones básicas LFT</a>
+            <a class="collapse-item"  href="{% url 'cto:contrato_list' %}">Tiempo indeterminado y prestaciones MODELO</a>
+          </div>
+        </div>
+      </li>
            
 
       <!-- Divider -->

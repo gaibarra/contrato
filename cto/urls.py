@@ -4,7 +4,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 #from .reportes import imprimir_solicitud, imprimir_archivos
 
+
+
+
 urlpatterns = [
+
+    path('contratos/contrata/<int:id>',coverletter_export, name="coverletter_export"),
+    
+    path('contratos/avanza/<int:id>',contratosAvanza, name="contratos_avanza"),
+    path('contratos/devuelve/<int:id>',contratosDevuelve, name="contratos_devuelve"),
+    
+    
+    path('coverletter/export', coverletter_export, name='coverletter_export'),
+
     path('departamentos/',DepartamentoView.as_view(), name="departamento_list"),
     path('departamentos/new',DepartamentoNew.as_view(), name="departamento_new"),
     path('departamentos/<int:pk>',DepartamentoEdit.as_view(), name="departamento_edit"),
@@ -22,6 +34,12 @@ urlpatterns = [
     path('contratos/',ContratosView.as_view(), name="contrato_list"),
     path('contratos/new',contratos2, name="contrato_new"),
     path('contratos/edit/<int:contrato_id>',contratos2, name="contrato_edit"),
+
+
+    #path('partes/new2',partes2, name="sujeto_new"),
+    
+   
+
 
 ]+ static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
 

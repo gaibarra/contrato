@@ -25,7 +25,9 @@ SECRET_KEY = 'a0l7j6k+8q_$d28_tu(u$ga34jq##shvrv3wcrjzuq7973ly2w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -43,10 +45,14 @@ INSTALLED_APPS = [
     'ley',
     'ckeditor',
     'import_export',
+    'crispy_forms',
     'djmoney',
     'django_userforeignkey',
     'rest_framework',
+  
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -164,12 +170,16 @@ MEDIA_URL = '/media/'
 #LOGOUT_REDIRECT_URL = 'bases'
 
 EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'comunica.modelo@gmail.com'
+EMAIL_HOST_PASSWORD = 'cm40611822'
 
-INTERNAL_IPS = [
-    # ...
-    '127.0.0.1',
-    # ...
-]
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+INTERNAL_IPS = ['http://127.0.0.1',]
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 LES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

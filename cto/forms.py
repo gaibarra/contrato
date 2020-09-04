@@ -1,5 +1,5 @@
 from django import forms
-
+from django.contrib.auth.models import User 
 from .models import Departamento, Partes, Contratos
 
 
@@ -20,6 +20,12 @@ class DepartamentoForm(forms.ModelForm):
             })
 
 class PartesForm(forms.ModelForm):
+        
+    
+    claveDepartamento = forms.ModelChoiceField(
+        queryset=Departamento.objects.filter(estado=True)
+            .order_by('claveDepartamento')
+        )
     
     domicilioParte = forms.CharField(
             widget=forms.Textarea(
@@ -31,14 +37,6 @@ class PartesForm(forms.ModelForm):
                     }
                 )
             )
-    
-    
-    #claveDepartamento = forms.ModelChoiceField(
-    #    queryset=Departamento.objects.filter(estado=True)
-    #    .order_by('departamento')
-    #)
-    
-    
     class Meta:
         model =Partes
         fields=['claveDepartamento','codigo', 'tituloParte', 'nombresParte', 'apellidoPaternoParte', 'apellidoMaternoParte','fecha_ingreso', 'email', 'lugarnacimientoParte', 'rfc', 'imss', 'curp','regfiscalParte', 'cedula_profParte', 'titulo_profParte', 'universidadParte','domicilioParte', 'phone', 'mobile','grupo_sanguineo','alergias']

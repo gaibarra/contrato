@@ -5,6 +5,20 @@ from import_export.admin import ImportExportModelAdmin
 
 # Register your models here.
 
+class TipocontratoResource(resources.ModelResource):
+    class Meta:
+        model = Tipocontrato
+
+class TipocontratoAdmin(ImportExportModelAdmin,admin.ModelAdmin):
+    search_fields = ['tituloContrato']
+    list_display = ('tituloContrato', 'textoinicialContrato', 'descripcionContrato','marcatipoContrato')
+    resource_class = TipocontratoResource
+
+admin.site.register(Tipocontrato, TipocontratoAdmin)
+
+
+   
+
 class SecuenciaResource(resources.ModelResource):
     class Meta:
         model = Secuencia
@@ -102,7 +116,7 @@ admin.site.register(Area, AreaAdmin)
 
 admin.site.register(Campus)
 admin.site.register(Ciclos)
-admin.site.register(Tipocontrato)
+
 admin.site.register(Contratos)
 
 admin.site.register(Niveles)

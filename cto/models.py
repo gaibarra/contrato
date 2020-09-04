@@ -110,12 +110,12 @@ class Departamento(ClaseModelo2):
     f048 = models.CharField('Formato48', max_length=60, blank=True, null=True)
     f049 = models.CharField('Formato49', max_length=60, blank=True, null=True)
     f050 = models.CharField('Formato50', max_length=60, blank=True, null=True)
-    
-
-
+    rango1 = models.IntegerField('Rango inicial', blank=True, null=True)  
+    rango2 = models.IntegerField('Rango final', blank=True, null=True)
+    direccion = models.IntegerField('Dirección', blank=True, null=True)
 
     def __str__(self):
-        return '{}'.format(self.nombreDepartamento)
+        return '{}'.format(self.claveDepartamento + "  " + self.nombreDepartamento )
 
     def save(self):
         self.nombreDepartamento = self.nombreDepartamento.upper()
@@ -128,6 +128,7 @@ class Departamento(ClaseModelo2):
 class Puestos(ClaseModelo2):
     nombrePuesto = models.CharField('Nombre Puesto', max_length=100, blank=False, null=False)
     claveCampus = models.CharField('Clave del Campus', max_length=3, blank=False, null=False)
+    actividadesPuesto = RichTextField('Actividades', blank=True, null=True)
     
     def __str__(self):
         return '{}'.format(self.nombrePuesto)
@@ -191,8 +192,10 @@ class Partes(ClaseModelo2):
     grupo_sanguineo = models.CharField('Grupo sanguíneo', max_length=40, blank=True, null=True)
     alergias = models.CharField('Alergias', max_length=100, blank=True, null=True)
     salarioDiario = models.FloatField('Salario Diario', blank=True, null=True)
-    
-    
+    nacionalidadParte =  models.CharField('Nacionalidad', max_length=30, blank=True, null=True)
+    estadocivilParte =  models.CharField('Estado Civil', max_length=30, blank=True, null=True)
+
+
     def __str__(self):
         return '{}'.format(self.nombreParte)
 
@@ -303,7 +306,7 @@ class Contratos(ClaseModelo2):
     cstep5 = RichTextField('Comentarios 5', blank=True, null=True, default="")
     cstep6 = RichTextField('Comentarios 6', blank=True, null=True, default="")
     devuelto_por = models.IntegerField('Devuelto por', blank=True, null=True)
-    
+    actividadesContrato = RichTextField('Actividades', blank=True, null=True)
 
     def __str__(self):
         return '{}'.format(self.id)

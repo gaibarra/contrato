@@ -53,7 +53,10 @@
         {% endfor %} 
         
      
-        
+        {% if enc.id %}
+            <a href="{% url 'cto:coverletter_export' enc.id %}" class="fa fa-download">Contrato</a>
+          <!--  <button type="button" class="fa fa-download"" onclick="contrata({{enc.id}})">Contrato</button>-->
+        {% endif %}
        
         
         <a href="{% url 'cto:contrato_list' %}" class="btn btn-danger">Salir</a>
@@ -74,11 +77,11 @@
                          
                         </div>
                         
-                        <div class="row pt-2">
-                            <div class="col-lg-2 text-left">
-                               Folio:
+                        <div class="row badge-primary">
+                            <div class="col-lg-1 text-center">
+                               #
                             </div>
-                            <div class="col-sm-2 pl-2">
+                            <div class="col-sm-3 pl-2">
                                  <input type="number" name="enc_id" id="enc_id" readonly class="form-control  text-center"
                                  value = "enc.id" >
                             
@@ -110,13 +113,19 @@
                                 </div>
 
                               {% else %}
-                                <div class="col-lg-9 form-group">
+                                <div class="col-lg-7 form-group">
                                     <select name="enc_nombreParte" id="enc_nombreParte" class="form-control" required>
                                         <option value="0">Buscar</option>
-                                        {% for item in fun2 %}
+                                        {% for item in fun3 %}
                                             <option value="{{item.id}}">{{ item.nombreParte }} </option>
                                         {% endfor %}
                                      </select>
+                                
+                                
+                                </div>
+                                <div class="col-lg-2 ">
+                                    <a href="{% url 'cto:partes_list' %}" class="btn btn-success">Nuevo</a>
+
                                 </div>
                           
                             {% endif%}
@@ -214,7 +223,7 @@
                             <div class="col-lg-9 form-group">
                                 <select name="enc_testigoContrato1" id="enc_testigoContrato1" class="form-control" required>
                                     <option value="0">Buscar</option>
-                                    {% for item in fun2 %}
+                                    {% for item in fun3 %}
                                         <option value="{{item.nombreParte}}">{{ item.nombreParte }} </option>
                                     {% endfor %}
                                 </select>
@@ -241,10 +250,11 @@
                             <div class="col-lg-9 form-group">
                                 <select name="enc_testigoContrato2" id="enc_testigoContrato2" class="form-control" required>
                                     <option value="0">Buscar</option>
-                                    {% for item in fun2 %}
+                                    {% for item in fun3 %}
                                         <option value="{{item.nombreParte}}">{{ item.nombreParte }} </option>
                                     {% endfor %}
                                 </select>
+                            
                             </div>
                             {% else %}
                                 <div class="col-lg-9 form-group" >
@@ -635,8 +645,10 @@
                            
                             <tr>
                                 <td>
-                                <iframe src="{{ item.pdf.url }}" width="400" height="400" style="border:1px solid black;">
+                                <iframe src="{{ item.pdf.url }}" width="400" height="400"  style="border:1px solid black;" allowfullscreen>
                                 </iframe>
+                                
+                                
                                 </td>
                                 
                                 <td>{{ item.documento }}</td>
@@ -832,8 +844,112 @@
 
 
     });
- 
+function avanza(id)
+  {
     
+    alert("Enviado ok !!");
+    var data = {id:id};
+    data = JSON.stringify(data);
+    var token = '{{csrf_token}}';
+    // alert(token);
+    // alert(id);
+    
+    $.ajax({
+      headers : {"X-CSRFToken": token},
+      type:"POST",
+      url:"/cto/contratos/avanza/"+id,
+      data: data,
+      success: function(response){
+        if(response==="OK")
+        {
+           window.location.href = "/cto/contratos/";
+        }
+        else{
+          mensaje("Error Intentado Cambiar Status");
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrow){
+        console.log(textStatus, errorThrow);
+        mensaje(errorThrow,'red');
+        cerrar_modal();
+      }
+    });
+  }
+function devuelve(id)
+  {
+    
+    alert("Devuelto ok !!");
+    var data = {id:id};
+    data = JSON.stringify(data);
+    var token = '{{csrf_token}}';
+    // alert(token);
+    // alert(id);
+    
+    $.ajax({
+      headers : {"X-CSRFToken": token},
+      type:"POST",
+      url:"/cto/contratos/devuelve/"+id,
+      data: data,
+      success: function(response){
+        if(response==="OK")
+        {
+          
+         window.location.href = "/cto/contratos/";
+          
+        }
+        else{
+          mensaje("Error Intentado Cambiar Status");
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrow){
+        console.log(textStatus, errorThrow);
+        mensaje(errorThrow,'red');
+        cerrar_modal();
+      }
+    });
+  }
+// Call the dataTables jQuery plugin
+// $(document).ready(function() {
+//   $('.table').DataTable();
+// });
+
+
+function contrata(id)
+  {
+    alert("Contrato ok !!");
+    var data = {id:id};
+    data = JSON.stringify(data);
+    var token = '{{csrf_token}}';
+    // alert(token);
+    // alert(id);
+    
+    $.ajax({
+      headers : {"X-CSRFToken": token},
+      type:"POST",
+      url:"/cto/contratos/contrata/"+id,
+      data: data,
+      success: function(response){
+        if(response==="OK")
+        {
+          
+         window.location.href = "/cto/contratos/";
+          
+        }
+        else{
+          mensaje("Error Intentado Imprimir contrato");
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrow){
+        console.log(textStatus, errorThrow);
+        mensaje(errorThrow,'red');
+        cerrar_modal();
+      }
+    });
+  }
+// Call the dataTables jQuery plugin
+// $(document).ready(function() {
+//   $('.table').DataTable();
+// });   
   
 
 </script>
