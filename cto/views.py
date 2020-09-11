@@ -1,19 +1,18 @@
-
 import io
 from pathlib import Path
 import os
 
-
-
-
 # Para utilizar algunas de las funciones de la librería
 from docx import Document
 from docx.shared import Inches, Pt, Cm
+
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.section import WD_SECTION
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_BREAK_TYPE
-from docx.enum.table import WD_ALIGN_VERTICAL
-from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.table import WD_ALIGN_VERTICAL, WD_ROW_HEIGHT
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_TABLE_DIRECTION
+from docx.enum.style import WD_STYLE
+from docx.oxml.shared import OxmlElement, qn
 
 
 import docx
@@ -579,6 +578,7 @@ def coverletter_export(request,id):
     locale.setlocale(locale.LC_TIME, "es-MX")
     
     
+    #footer_para.paragraph_format.page_break_before = True
    
         #set up font
     font = document.styles['Normal'].font
@@ -600,41 +600,43 @@ def coverletter_export(request,id):
     for section in sections:
         
         section.top_margin = Cm(0)
-        section.bottom_margin = Cm(0.75)
-        section.left_margin = Cm(2.00)
-        section.right_margin = Cm(2.00)
+        section.bottom_margin = Cm(0.0)
+        section.left_margin = Cm(1.5)
+        section.right_margin = Cm(1.5)
         section.header_distance = Cm(0)
     
     header = document.sections[0].header
     htable=header.add_table(1, 2, Inches(5))
+    #htable.style = "TableGrid"
     
     for row in htable.rows:
         row.height = Inches(1.0)
     
     
-    
-    
     htable.alignment = WD_TABLE_ALIGNMENT.LEFT
     htab_cells=htable.rows[0].cells
     
-    
-    ht0=htab_cells[0].add_paragraph()
+     
+    ht0=htab_cells[0].paragraphs[0]
     paragraph_format = ht0.paragraph_format
     paragraph_format.space_before = Pt(0)
     paragraph_format.space_after = Pt(0)
-
+    paragraph_format.left_indent = Pt(0)
     
     kh=ht0.add_run()
     
     THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
     my_file = os.path.join(THIS_FOLDER, 'logo.png')
     
+    
+
+
     kh.add_picture(my_file, width=Inches(1.00))
     ht0.alignment = WD_ALIGN_PARAGRAPH.LEFT
     
     ht1=htab_cells[1].add_paragraph("ESCUELA MODELO, S.C.P.")
     htable.cell(0,1).vertical_alignment = WD_ALIGN_VERTICAL.CENTER
-    htable.cell(0,0).vertical_alignment = WD_ALIGN_VERTICAL.CENTER   
+    htable.cell(0,0).vertical_alignment = WD_ALIGN_VERTICAL.TOP   
     
   
     # Get the user's fullname
@@ -695,10 +697,6 @@ def coverletter_export(request,id):
     paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
     
     
-    
-   
-    
-    
     nums = { 2, 3, 4, 5 , 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 }
 
     
@@ -753,28 +751,172 @@ def coverletter_export(request,id):
             paragraph_format.left_indent = Inches(0.4)
             paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
             
-    dtable=document.add_table(rows=2, cols=2)
-    #dtable.style = "TableGrid"
+    
+    dtable=document.add_table(rows=3, cols=2)
+    dtable.style = "TableNormal"
     dtable.cell(0,1).vertical_alignment = WD_ALIGN_VERTICAL.CENTER
     dtable.cell(0,0).vertical_alignment = WD_ALIGN_VERTICAL.CENTER   
-    
+    dtable.cell(1,1).vertical_alignment = WD_ALIGN_VERTICAL.BOTTOM
+    dtable.cell(1,0).vertical_alignment = WD_ALIGN_VERTICAL.BOTTOM
+    dtable.cell(2,1).vertical_alignment = WD_ALIGN_VERTICAL.TOP
+    dtable.cell(2,0).vertical_alignment = WD_ALIGN_VERTICAL.TOP
     
     dtab_cells=dtable.rows[0].cells
-    dt1=dtab_cells[0].add_paragraph()
-    dt1.add_run(contratos.enCalidadDe1, style = 'CommentsStyle').bold = True
-    dt1.add_run( "_________________________")
-    dt2=dtab_cells[1].add_paragraph()
-    dt2.add_run(contratos.enCalidadDe2, style = 'CommentsStyle').bold = True
-    dt2.add_run( "_________________________")
-    paragraph_format = dt1.paragraph_format
-    paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    paragraph_format = dt2.paragraph_format
-    paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    dt1=dtab_cells[0].text = ''
+    dt1=dtab_cells[0].paragraphs[0].add_run(contratos.enCalidadDe1).font.size = Pt(11)
+    dt1=dtab_cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    dt1=dtab_cells[1].text = ''
+    dt1=dtab_cells[1].paragraphs[0].add_run(contratos.enCalidadDe2).font.size = Pt(11)
+    dt1=dtab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    dtab_cells=dtable.rows[1].cells
+    dtable.rows[1].height_rule = WD_ROW_HEIGHT.EXACTLY
+    dtable.rows[1].height = 342900
+    dt1=dtab_cells[0].text = ''
+    dt1=dtab_cells[0].paragraphs[0].add_run("___________________________________").font.size = Pt(11)
+    dt1=dtab_cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    dt1=dtab_cells[1].text = ''
+    dt1=dtab_cells[1].paragraphs[0].add_run("___________________________________").font.size = Pt(11)
+    dt1=dtab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+
+    dtab_cells=dtable.rows[2].cells
+    dt2=dtab_cells[0].text = '' 
+    dt2=dtab_cells[0].paragraphs[0].add_run(replegal.tituloParte + " " + replegal.nombreParte).font.size = Pt(11)
+    dt2=dtab_cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    dt2=dtab_cells[1].text = '' 
+    dt2=dtab_cells[1].paragraphs[0].add_run(partes.tituloParte + " " + partes.nombreParte).font.size = Pt(11)
+    dt2=dtab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    dtable=document.add_table(rows=1, cols=2)
+    
+    dtable1=document.add_table(rows=3, cols=2)
+    dtable1.style = "TableNormal"
+    dtable1.cell(0,1).vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    dtable1.cell(0,0).vertical_alignment = WD_ALIGN_VERTICAL.CENTER   
+    dtable1.cell(1,1).vertical_alignment = WD_ALIGN_VERTICAL.BOTTOM
+    dtable1.cell(1,0).vertical_alignment = WD_ALIGN_VERTICAL.BOTTOM
+    dtable1.cell(2,1).vertical_alignment = WD_ALIGN_VERTICAL.TOP
+    dtable1.cell(2,0).vertical_alignment = WD_ALIGN_VERTICAL.TOP
+    
+    dtab_cells=dtable1.rows[0].cells
+    dt3=dtab_cells[0].text = ''
+    dt3=dtab_cells[0].paragraphs[0].add_run("TESTIGO").font.size = Pt(11)
+    dt3=dtab_cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    dt3=dtab_cells[1].text = ''
+    dt3=dtab_cells[1].paragraphs[0].add_run("TESTIGO").font.size = Pt(11)
+    dt3=dtab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    dtab_cells=dtable1.rows[1].cells
+    dtable1.rows[1].height_rule = WD_ROW_HEIGHT.EXACTLY
+    dtable1.rows[1].height = 342900
+    dt4=dtab_cells[0].text = ''
+    dt4=dtab_cells[0].paragraphs[0].add_run("___________________________________").font.size = Pt(11)
+    dt4=dtab_cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    dt4=dtab_cells[1].text = ''
+    dt4=dtab_cells[1].paragraphs[0].add_run("___________________________________").font.size = Pt(11)
+    dt4=dtab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+
+    dtab_cells=dtable1.rows[2].cells
+    dt5=dtab_cells[0].text = '' 
+    dt5=dtab_cells[0].paragraphs[0].add_run(contratos.testigoContrato1).font.size = Pt(11)
+    dt5=dtab_cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    dt5=dtab_cells[1].text = '' 
+    dt5=dtab_cells[1].paragraphs[0].add_run(contratos.testigoContrato2).font.size = Pt(11)
+    dt5=dtab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    document.add_paragraph()
+    document.add_paragraph()
+    xtable=document.add_table(rows=1, cols=2)
+    xtable.style = "TableGrid"
+ 
+    xtab_cells=xtable.rows[0].cells
+    xt1=xtab_cells[1].text = '' 
+    xt1=xtab_cells[1].paragraphs[0].add_run(partes.tituloParte + " " + partes.nombreParte).font.size = Pt(8)
+    xt1=xtab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    xt1=xtab_cells[0].text = '' 
+    xt1=xtab_cells[0].paragraphs[0].add_run("DATOS PARA CONTROL EN EL ÁREA DE RECURSOS HUMANOS" ).font.size = Pt(8)
+    xt1=xtab_cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     
     
+    ytable=document.add_table(rows=2, cols=5)
+    ytable.style = "TableGrid"
+
+    ytab_cells=ytable.rows[0].cells
+    yt1=ytab_cells[0].text = '' 
+    yt1=ytab_cells[0].paragraphs[0].add_run("Total Contrato en Horas").font.size = Pt(8)
+    yt1=ytab_cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    ytab_cells=ytable.rows[0].cells
+    yt1=ytab_cells[1].text = '' 
+    yt1=ytab_cells[1].paragraphs[0].add_run("Total Contrato en $").font.size = Pt(8)
+    yt1=ytab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    ytab_cells=ytable.rows[0].cells
+    yt1=ytab_cells[2].text = '' 
+    yt1=ytab_cells[2].paragraphs[0].add_run("Clave del Depto.").font.size = Pt(8)
+    yt1=ytab_cells[2].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    ytab_cells=ytable.rows[0].cells
+    yt1=ytab_cells[3].text = '' 
+    yt1=ytab_cells[3].paragraphs[0].add_run("Ingreso o Reingreso").font.size = Pt(8)
+    yt1=ytab_cells[3].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    ytab_cells=ytable.rows[0].cells
+    yt1=ytab_cells[4].text = '' 
+    yt1=ytab_cells[4].paragraphs[0].add_run("Versión").font.size = Pt(8)
+    yt1=ytab_cells[4].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+
+    ytab_cells=ytable.rows[1].cells
+    yt2=ytab_cells[0].text = '' 
+    yt2=ytab_cells[0].paragraphs[0].add_run(str(contratos.npContrato)).font.size = Pt(8)
+    yt2=ytab_cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    ytab_cells=ytable.rows[1].cells
+    yt2=ytab_cells[1].text = '' 
+    yt2=ytab_cells[1].paragraphs[0].add_run(currency).font.size = Pt(8)
+    yt2=ytab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    ytab_cells=ytable.rows[1].cells
+    yt2=ytab_cells[2].text = '' 
+    yt2=ytab_cells[2].paragraphs[0].add_run(str(partes.claveDepartamento)).font.size = Pt(8)
+    yt2=ytab_cells[2].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    ytab_cells=ytable.rows[1].cells
+    yt2=ytab_cells[3].text = '' 
+    yt2=ytab_cells[3].paragraphs[0].add_run(" ").font.size = Pt(8)
+    yt2=ytab_cells[3].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    ytab_cells=ytable.rows[1].cells
+    yt2=ytab_cells[4].text = '' 
+    yt2=ytab_cells[4].paragraphs[0].add_run("EMODELO 17 v5 enero 2019").font.size = Pt(8)
+    yt2=ytab_cells[4].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     
     
+    new_section = document.sections[0].footer  # Added new section for assigning different footer on each page.
+    sectPr = new_section._sectPr
     
+    pgNumType = OxmlElement('w:pgNumType')
+    pgNumType.set(qn('w:fmt'), 'decimal')
+    pgNumType.set(qn('w:start'), '1')
+    sectPr.append(pgNumType)
+    
+    new_footer = document.sections[0].footer  # Get footer-area of the recent section in document
+    new_footer.is_linked_to_previous = False
+    
+    
+    footer_para = new_footer.paragraphs[0]  
+    run_footer = footer_para.add_run("Pág- ").font.size = Pt(11)
+    run_footer = footer_para.add_run(pgNumType)
+    _add_number_range(run_footer)
+    font = run_footer.font
+    font.name = 'Arial'
+    font.size = Pt(11)
+    run_footer=new_footer.paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+
     # Print the user's name
     #document_elements_heading = document.add_heading(document_data_full_name, 0)
     #document_elements_heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -998,3 +1140,36 @@ def convierte_cifra(numero,sw):
          	    texto_unidad = texto_unidad[sw]
 
     return "%s %s %s" %(texto_centena,texto_decena,texto_unidad)
+
+
+def _add_field(run, field):
+    """ add a field to a run
+    """
+    fldChar1 = OxmlElement('w:fldChar')  # creates a new element
+    fldChar1.set(qn('w:fldCharType'), 'begin')  # sets attribute on element
+    instrText = OxmlElement('w:instrText')
+    instrText.set(qn('xml:space'), 'preserve')  # sets attribute on element
+    instrText.text = field
+
+    fldChar2 = OxmlElement('w:fldChar')
+    fldChar2.set(qn('w:fldCharType'), 'separate')
+    t = OxmlElement('w:t')
+    t.text = "Seq"
+    fldChar2.append(t)
+
+    fldChar4 = OxmlElement('w:fldChar')
+    fldChar4.set(qn('w:fldCharType'), 'end')
+
+
+    r_element = run._r
+    r_element.append(fldChar1)
+    r_element.append(instrText)
+    r_element.append(fldChar2)
+    r_element.append(fldChar4)
+
+
+
+def _add_number_range(run):
+    """ add a number range field to a run
+    """
+    _add_field(run, r'Page')    
