@@ -255,13 +255,13 @@ class Requisitos(ClaseModelo2):
         verbose_name_plural = "Requisitos"
         verbose_name="Requisito"
 class Contratos(ClaseModelo2):
-    tipocontrato = models.ForeignKey(Tipocontrato, on_delete=models.CASCADE)
+    tipocontrato = models.ForeignKey(Tipocontrato, on_delete=models.CASCADE, verbose_name='Tipo de Contrato')
     datecontrato = models.DateTimeField('Fecha del contrato', blank=True, null=True)
     datecontrato_ini = models.DateTimeField('Fecha inicial de la vigencia', blank=True, null=True)
     datecontrato_fin = models.DateTimeField('Fecha final de la vigencia', blank=True, null=True)
     parte1 = models.IntegerField('Parte 1', blank=True, null=True, default=3 )
     enCalidadDe1 = models.CharField('En calidad de 1', max_length=150, blank=False, null=False)
-    parte2 = models.ForeignKey(Partes, on_delete=models.CASCADE)
+    parte2 = models.ForeignKey(Partes, on_delete=models.CASCADE, verbose_name='Sujeto del Contrato')
     enCalidadDe2 = models.CharField('En calidad de 2', max_length=150, blank=False, null=False)
     #parte3 = models.ForeignKey(Partes, on_delete=models.CASCADE)
     #enCalidadDe3 = models.CharField('En calidad de 3', max_length=150, blank=True, null=True)

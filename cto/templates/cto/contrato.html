@@ -124,7 +124,7 @@
                                 
                                 </div>
                                 <div class="col-lg-2 ">
-                                    <a href="{% url 'cto:partes_list' %}" class="btn btn-success">Nuevo</a>
+                                    <a href="{% url 'cto:partes_new' %}" class="btn btn-success">Nuevo</a>
 
                                 </div>
                           
@@ -553,7 +553,7 @@
                     <hr>
                     <div class="row" pt-2>    
                             <div class="col-lg-10 form-group" pt-2 >
-                                <select name="documento" id="documento" class="form-control" required>
+                                <select name="documento" id="documento" class="form-control"  required>
                                     <option value="0">Buscar</option>
                                     {% for item in  requi %}
                                         <option value="{{item.id}}">{{ item.requisito }} </option>

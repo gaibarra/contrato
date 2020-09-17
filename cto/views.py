@@ -556,8 +556,6 @@ class ContratosEdit(VistaBaseEdit):
 
 
 
-
-
 login_required(login_url="/login/")
 @permission_required("cto.change_contratos",login_url="/login/")
 def coverletter_export(request,id):
