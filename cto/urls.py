@@ -37,7 +37,7 @@ urlpatterns = [
     path('contratos/edit2/<int:pk>',ContratosEdit.as_view(), name="contrato_edit2"),
 
     #path('partes/new2',partes2, name="sujeto_new"),
-    
+    path('contratos/gracont/<int:id>',contratoGracont, name="contrato_gracont"),
    
 
 

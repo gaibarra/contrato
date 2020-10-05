@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
+    'api',
     'bases',
     'cto',
     'ley',
@@ -49,12 +50,14 @@ INSTALLED_APPS = [
     'djmoney',
     'django_userforeignkey',
     'rest_framework',
+    'corsheaders',
   
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -183,4 +186,14 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 LES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
+
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+]

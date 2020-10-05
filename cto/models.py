@@ -273,7 +273,7 @@ class Contratos(ClaseModelo2):
     npContrato = models.IntegerField('Número de pagos', blank=True, null=True)
     imppContrato = MoneyField('Importe de cada pago', max_digits=14, decimal_places=2, blank=False, null=False, default_currency="MXN")
     vhppContrato = MoneyField('Valor Hora del Período', max_digits=14, decimal_places=2, blank=False, null=False, default_currency="MXN")
-    totalhorasContrato = models.IntegerField('Número de pagos', blank=True, null=True)
+    totalhorasContrato = models.IntegerField('Total de horas', blank=True, null=True)
     testigoContrato1 = models.CharField('Testigo 1', max_length=100, blank=True, null=True)
     testigoContrato2 = models.CharField('Testigo 2', max_length=100, blank=True, null=True)
     versionContrato = models.CharField('Versión del contrato', max_length=100, blank=True, null=True)

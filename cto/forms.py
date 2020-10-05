@@ -62,7 +62,10 @@ class PartesForm(forms.ModelForm):
         self.fields['domicilioParte'].widget.attrs['verbose_name'] = "Domicilio"
 
 class ContratosForm(forms.ModelForm):
-    
+    #testigoContrato1 = forms.ModelChoiceField(
+    #    queryset=Partes.objects.filter(estado=True)
+    #        .order_by('nombreParte')
+    #    )
     datecontrato = forms.DateField(
             label= "Fecha del Contrato",
              
@@ -98,7 +101,8 @@ class ContratosForm(forms.ModelForm):
             )                        
     class Meta:
         model=Contratos
-        fields=['id', 'tipocontrato','datecontrato','parte2' , 'datecontrato_ini', 'datecontrato_fin', 'importeContrato', 'status']
+        fields=['id', 'tipocontrato','datecontrato','parte2' , 'datecontrato_ini', 'datecontrato_fin', 'importeContrato', 'status', 'npContrato', 'imppContrato', 'totalhorasContrato',
+        'testigoContrato1','testigoContrato2']
         exclude = ['um','fm','uc','fc']
    
     def __init__(self, *args, **kwargs):
@@ -117,5 +121,6 @@ class ContratosForm(forms.ModelForm):
         self.fields['datecontrato_fin'].widget.attrs['style'] = "width:120px"
         self.fields['importeContrato'].widget.attrs['style'] = "width:160px"
         self.fields['status'].widget.attrs['readonly'] = True
-
-
+        self.fields['imppContrato'].widget.attrs['style'] = "width:160px"
+        self.fields['testigoContrato1'].widget.attrs['style'] = "width:350px"
+        self.fields['testigoContrato2'].widget.attrs['style'] = "width:350px"

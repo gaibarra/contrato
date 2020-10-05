@@ -4,36 +4,22 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
-from .serializers import DepartamentoSerializer
-from cto.models import Departamento, Partes
+from api.serializer import ContratosSerializer
+from cto.models import Contratos
 
 from django.db.models import Q
 
-class DepartamentoList(APIView):
+class ContratosList(APIView):
     def get(self,request):
-        depa = Departamento.objects.all()
-        data = DepartamentoSerializer(depa,many=True).data
+        cont = Contratos.objects.all()
+        data =ContratosSerializer(cont,many=True).data
         return Response(data)
 
 
-class DepartamentoDetalle(APIView):
-    def get(self,request, claveDepartamento):
-        depa = get_object_or_404(Departamento,Q(claveDepartamento=claveDepartamento))
-        data = DepartamentoSerializer(depa).data
-        return Response(data)
-
-
-class PartesList(APIView):
-    def get(self,request):
-        func = Partes.objects.all()
-        data = PartesSerializer(func,many=True).data
-        return Response(data)
-
-
-class PartesDetalle(APIView):
-    def get(self,request, codigo):
-        func = get_object_or_404(Partes,Q(codigo=codigo))
-        data = PartesSerializer(func).data
+class ContratosDetalle(APIView):
+    def get(self,request, id):
+        cont = get_object_or_404(Contratos,Q(id=id))
+        data = ContratosSerializer(cont).data
         return Response(data)
 
 

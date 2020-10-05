@@ -17,6 +17,7 @@ from docx.oxml.shared import OxmlElement, qn
 
 import docx
 import locale
+import json
 
 
 from django.shortcuts import render,redirect, get_list_or_404
@@ -1170,4 +1171,27 @@ def _add_field(run, field):
 def _add_number_range(run):
     """ add a number range field to a run
     """
-    _add_field(run, r'Page')    
+    _add_field(run, r'Page') 
+
+
+@login_required(login_url="/login/")
+@permission_required("cto.change_contratos",login_url="/login/")
+
+def contratoGracont(request,id):
+    contratos = Contratos.objects.filter(pk=id).first()
+    
+   
+    if request.is_ajax and request.method == "POST":
+        enc_datecontrato_ini = request.POST.get('enc_datecontrato_ini')
+        print(enc_datecontrato_ini)
+    
+        if not contratos.fcap:
+           contratos.datecontrato = datetime.today()
+           contratos.datecontrato_ini = enc_datecontrato_ini
+           contratos.save()
+           return HttpResponse("OK")
+        
+        return HttpResponse("FAIL")
+    
+    
+    return HttpResponse("FAIL")        

@@ -123,8 +123,8 @@
                                 
                                 
                                 </div>
-                                <div class="col-lg-2 ">
-                                    <a href="{% url 'cto:partes_new' %}" class="btn btn-success">Nuevo</a>
+                                <div class="col-lg-3 ">
+                                    <a href="{% url 'cto:partes_list' %}" class="btn btn-success">Altas y cambios</a>
 
                                 </div>
                           
@@ -268,16 +268,12 @@
 
 
                         <hr>
-
+                   
+                    <button type="button" class="btn btn-primary" onclick="gracont({{enc.id}})">Enviar</button>
                     
-                        
-                        
-                        
-                        
-                        
             <!-- Modal -->            
                         <div class="row p-2">
-                            {% if enc.fcap == null and enc.rcap == enc.current_user and enc.imp_total and enc.uc_id == enc.current_user  %}
+                            {% if enc.fcap == null and enc.rcap == enc.current_user  and enc.uc_id == enc.current_user  %}
                                 
                                 
 
@@ -697,7 +693,7 @@
             return false;
         }
 
-        var path = "{% url 'api:partes_list' %}" + codigo;
+        var path = "{% url 'api:contratos_list' %}" + codigo;
         $.ajax({
             type:"GET",
             url: path,
@@ -764,8 +760,10 @@
         });
         $("#sidebarToggle").click();
         $('#enc_nombreParte').select2({
+            selectOnBlur: true,
             placeholder: "Seleccione Sujeto del contrato",
             allowClear: true
+           
         });
         
         $('#documento').select2({
@@ -775,8 +773,11 @@
         
         $("#sidebarToggle").click();
         $('#enc_testigoContrato1').select2({
+            tags: true,
+            selectOnBlur: true,
+            //multiple: true,
             placeholder: "Seleccione al primer testigo",
-            allowClear: true
+            //allowClear: true
         });    
 
         
@@ -838,10 +839,8 @@
         
         $("#enc_datecontrato_fin").val("{{ enc.datecontrato_fin|date:'Y-m-d' }}");
                 
-      
         
         $("#Folio").val("{{ det.no_facturasol }}").change();  
-
 
     });
 function avanza(id)
@@ -950,7 +949,41 @@ function contrata(id)
 // $(document).ready(function() {
 //   $('.table').DataTable();
 // });   
+
+function gracont(id)
+  {
+    //alert("guardado ok !!");
   
+    var data = {id:id,
+               enc_datecontrato_ini : $("input[name='enc_datecontrato_ini']").val() };
+    data = JSON.stringify(data);
+    alert(data)
+    var token = '{{csrf_token}}';
+    // alert(token);
+    // alert(id);
+    
+    $.ajax({
+      headers : {"X-CSRFToken": token},
+      type:"POST",
+      url:"/cto/contratos/gracont/"+id,
+      data: data, 
+     
+      success: function(response){
+        if(response==="OK")
+        {
+           window.location.href = "/cto/contratos/";
+        }
+        else{
+          mensaje("Error Intentado guardar");
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrow){
+        console.log(textStatus, errorThrow);
+        mensaje(errorThrow,'red');
+        cerrar_modal();
+      }
+    });
+  }  
 
 </script>
 {% endblock %}
