@@ -955,19 +955,20 @@ function gracont(id)
     //alert("guardado ok !!");
   
     var data = {id:id,
-               enc_datecontrato_ini : $("input[name='enc_datecontrato_ini']").val() };
+               enc_datecontrato_ini : $("input[name='enc_datecontrato_ini']").val(),
+               enc_datecontrato_fin : $("input[name='enc_datecontrato_fin']").val() };
     data = JSON.stringify(data);
     alert(data)
     var token = '{{csrf_token}}';
-    // alert(token);
+    alert(token);
     // alert(id);
     
     $.ajax({
       headers : {"X-CSRFToken": token},
       type:"POST",
       url:"/cto/contratos/gracont/"+id,
-      data: data, 
-     
+      data: data,
+           
       success: function(response){
         if(response==="OK")
         {

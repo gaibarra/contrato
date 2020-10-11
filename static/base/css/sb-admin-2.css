@@ -11641,7 +11641,7 @@ a:focus {
 }
 
 .bg-login-image {
-  background: url(https://formatmodelo-assets.s3.us-east-2.amazonaws.com/modelo1.png) ;
+  background: url("/static/base/img/modelo1.png")
   background-position: center;
   background-repeat: no-repeat;
   background-size: 300px 300px;

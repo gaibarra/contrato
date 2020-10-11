@@ -1,6 +1,7 @@
 import io
 from pathlib import Path
 import os
+from django.http import JsonResponse
 
 # Para utilizar algunas de las funciones de la librería
 from docx import Document
@@ -18,7 +19,7 @@ from docx.oxml.shared import OxmlElement, qn
 import docx
 import locale
 import json
-
+from json import loads
 
 from django.shortcuts import render,redirect, get_list_or_404
 from django.views import generic 
@@ -1179,15 +1180,18 @@ def _add_number_range(run):
 
 def contratoGracont(request,id):
     contratos = Contratos.objects.filter(pk=id).first()
-    
+     
    
     if request.is_ajax and request.method == "POST":
-        enc_datecontrato_ini = request.POST.get('enc_datecontrato_ini')
-        print(enc_datecontrato_ini)
+        
+                
+        data = json.loads(request.body)
+        #print(data)
     
         if not contratos.fcap:
            contratos.datecontrato = datetime.today()
-           contratos.datecontrato_ini = enc_datecontrato_ini
+           contratos.datecontrato_ini = data["enc_datecontrato_ini"]
+           contratos.datecontrato_fin = data["enc_datecontrato_fin"]
            contratos.save()
            return HttpResponse("OK")
         
