@@ -187,10 +187,10 @@ class ContratosView(SinPrivilegios, generic.ListView):
         current_userx = self.request.user.id
         #conditions = dict(current_user=current_userx, uc_id=self.request.user) 
         #queryset = queryset.filter(**conditions)
-        return Contratos.objects.all()
-        #return Contratos.objects.filter(
-        #    Q(current_user=current_userx) | Q(uc_id=self.request.user)
-        #)
+        #return Contratos.objects.all()
+        return Contratos.objects.filter(
+            Q(current_user=current_userx) | Q(uc_id=self.request.user)
+        )
         #return SpyorEnc.objects.filter(
         #    Q(current_user=current_userx) | Q(uc_id=self.request.user) | Q(el_jefe=current_userx)
         #)
@@ -546,7 +546,7 @@ def contratos2(request,contrato_id=None):
         
             return redirect("cto:contrato_edit",contrato_id=contrato_id)
 
-    return render(request,template_name,contexto)
+    return render(request, template_name, contexto)
 
 class ContratosEdit(VistaBaseEdit):
         model = Contratos

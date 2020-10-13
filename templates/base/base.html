@@ -74,32 +74,81 @@
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Honorarios:</h6>
-            {% if perms.inv.view_categoria %}
-            <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Servicios Dentales</a>
-            {% endif %}
-            {% if perms.inv.view_subcategoria %}
-            <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Servicios Docentes</a>
-            {% endif %}
+            <h6 class="collapse-header"></h6>
+            {% if perms.cto.view_contratos %}
+            {% comment %} <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Servicios Dentales</a> {% endcomment %}
+            <div class="dropdown">
+             <button class="btn btn-secondary dropdown-toggle badge-info "
+                     type="button" id="dropdownMenu1" data-toggle="dropdown"
+                     aria-haspopup="true" aria-expanded="false">
+               Sueldos Docentes
+             </button>
+             <div class="dropdown-menu" aria-labelledby="dropdownMenu1">
+               <a class="dropdown-item" href="#!">SUELDOS de DOCENTES con RECONOCIMIENTO DE ANTIGÜEDAD, TIEMPO INDETERMINADO Y PRESTACIONES MODELO</a>
+               <a class="dropdown-item" href="#!">SUELDOS de DOCENTES por TIEMPO DETERMINADO con PRESTACIONES MODELO</a>
+               <a class="dropdown-item" href="#!">SUELDOS de DOCENTES por TIEMPO DETERMINADO y con PRESTACIONES BÁSICAS DE LFT</a>
+               <a class="dropdown-item" href="#!">SUELDOS de DOCENTES por TIEMPO INDETERMINADO y con PRESTACIONES MODELO</a>
+             </div>
+           </div>
             
+            {% endif %}
+           
             
-            <h6 class="collapse-header">Sueldos:</h6>
+            <h6 class="collapse-header"></h6>
             
             {% if perms.cmp.view_proveedor %}
-            <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Docentes con Reconocimiento Ant</a>
+            {% comment %} <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Docentes con Reconocimiento Ant</a> {% endcomment %}
+            <div class="dropdown">
+             <button class="btn btn-secondary dropdown-toggle badge-info "
+                     type="button" id="dropdownMenu1" data-toggle="dropdown"
+                     aria-haspopup="true" aria-expanded="false">
+               Sueldos Administración
+             </button>
+             <div class="dropdown-menu" aria-labelledby="dropdownMenu1">
+               <a class="dropdown-item" href="#!">SUELDOS de ADMINISTRACIÓN con RECONOCIMIENTO DE ANTIGÜEDAD, por TIEMPO INDETERMINADO y con PRESTACIONES MODELO</a>
+               <a class="dropdown-item" href="#!">SUELDOS de ADMINISTRACIÓN con TIEMPO INDETERMINADO y con PRESTACIONES MODELO</a>
+               <a class="dropdown-item" href="#!">SUELDOS de ADMINISTRACIÓN por TIEMPO DETERMINADO y con PRESTACIONES MODELO</a>
+             </div>
+           </div>
+            
             {% endif %}
 
-            <h6 class="collapse-header">Asimilados a Salarios:</h6>
+            <h6 class="collapse-header"></h6>
             
             {% if perms.fac.view_cliente %}
-            <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Asimilados</a>
+            {% comment %} <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Asimilados</a> {% endcomment %}
+            <div class="dropdown">
+  				<button class="btn btn-secondary dropdown-toggle badge-info"
+          			type="button" id="dropdownMenu1" data-toggle="dropdown"
+         			 aria-haspopup="true" aria-expanded="false">
+    					Honorarios
+  				</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu1" >
+                    <a class="dropdown-item" href="#!">HONORARIOS por SERVICIOS DENTALES</a>
+                    <a class="dropdown-item" href="#!">HONORARIOS por SERVICIOS DOCENTES</a>
+                </div>
+            </div>
             {% endif %}
           
-            <h6 class="collapse-header">Servicios Profesionales:</h6>
+            <h6 class="collapse-header"></h6>
             
             {% if perms.fac.view_cliente %}
-            <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Empresas</a>
+            {% comment %} <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Empresas</a> {% endcomment %}
+            <div class="dropdown">
+  				<button class="btn btn-secondary dropdown-toggle badge-info"
+          			type="button" id="dropdownMenu1" data-toggle="dropdown"
+         			 aria-haspopup="true" aria-expanded="false">
+    					Externos
+  				</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu1" >
+                    <a class="dropdown-item" href="{% url 'cto:contrato_list' %}">CONTRATO DE HONORARIOS ASIMILADOS A SALARIOS</a>
+                    <a class="dropdown-item" href="#!">CONTRATO DE PRESTACIÓN DE SERVICIOS PROFESIONALES EDUCATIVOS</a>
+                </div>
+            </div>
             {% endif %}
+            
+            
+           
           
           </div>
         </div>
