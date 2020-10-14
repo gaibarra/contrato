@@ -77,12 +77,14 @@
     <thead>
       <th data-sortable="true" data-field="id">Folio</th>        
       <th data-sortable="true" data-field="tipocontrato">Tipo de Contrato</th>
+      <th data-sortable="true" data-field="datecontrato">Fecha</th>
       <th data-sortable="true" data-field="parte2">Sujeto del contrato</th>
+      <th data-sortable="true" data-field="importeContrato">Importe</th>
       
       <th class="all">Detalle</th>
       
       
-      <th class="all">Editar</th>
+      {% comment %} <th class="all">Editar</th> {% endcomment %}
      
     </thead>
     <tbody>
@@ -94,15 +96,16 @@
       <tr>
         <td>{{ item.id }}</td>
         <td>{{ item.tipocontrato }}</td>
+        <td>{{ item.datecontrato|date:'d-M-Y' }}</td>
         <td>{{ item.parte2 }}</td>
-      
+        <td>{{ item.importeContrato }}</td>
         
         <td>
           <a href="{% url 'cto:contrato_edit' item.id %}" class="href btn btn-success btn-circle">
               <i class="far fa-edit"></i>
           </a>
         </td>
-        <td>
+        {% comment %} <td>
            
            
              {% if item.status == "CAP" %}
@@ -111,7 +114,7 @@
            
               {% endif %}
                                               
-        </td>
+        </td> {% endcomment %}
       </tr>
        
       {% endfor %}
