@@ -84,7 +84,7 @@
                Sueldos Docentes
              </button>
              <div class="dropdown-menu" aria-labelledby="dropdownMenu1">
-               <a class="dropdown-item" id="7" href="{% url 'cto:contrato_list' %}">SUELDOS de DOCENTES con RECONOCIMIENTO DE ANTIGÜEDAD, TIEMPO INDETERMINADO Y PRESTACIONES MODELO</a>
+               <a class="dropdown-item" id="7" href="{% url 'cto:contrato_list' %}">SUELDOS de DOCENTES con RECONOCIMIENTO DE ANTIGÜEDAD, TIEMPO INDETERMINADO Y PRESTACIONES MODELO</a> 
                <a class="dropdown-item" href="#!">SUELDOS de DOCENTES por TIEMPO DETERMINADO con PRESTACIONES MODELO</a>
                <a class="dropdown-item" href="#!">SUELDOS de DOCENTES por TIEMPO DETERMINADO y con PRESTACIONES BÁSICAS DE LFT</a>
                <a class="dropdown-item" href="#!">SUELDOS de DOCENTES por TIEMPO INDETERMINADO y con PRESTACIONES MODELO</a>
@@ -562,21 +562,39 @@
 
   </script>
   
-</script>
-
-
+  
 <script type="text/javascript">
- 
   $(document).ready(function(){
-
     $("#7").click(function(){
+      var data = $(this).attr("id")
+      var token = '{{csrf_token}}';
       
-      var datax = {tipocont:$(this).attr("id")}
-      var datax = JSON.stringify(datax);
-      alert(datax);
-    }
-);
+      $.ajax({
+      headers : {"X-CSRFToken": token},
+      type:"GET",
+      url:"/api/v1/tipocontrato/"+data,
+      data: data,
+           
+      success: function(response){
+        if(response==="OK")
+        {
+           window.location.href = "/cto/contratos/";
+        }
+        else{
+          mensaje("Error Intentado guardar");
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrow){
+        console.log(textStatus, errorThrow);
+        mensaje(errorThrow,'red');
+        cerrar_modal();
+      }
+    });
+    
+  });
+});
 </script>
+
   
   
   {% endblock%}

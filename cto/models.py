@@ -428,11 +428,4 @@ class Doctos(ClaseModelo2):
         verbose_name_plural = "Documentos"
         verbose_name="Documento"
     
-    #acta_nac_constimgParte = models.FileField('Acta de nacimiento', upload_to='media/', default = 'None/no-img.jpg')
-    #rfc_imgParte = models.FileField('Cédula del R.F.C', upload_to='media/', default = 'None/no-img.jpg')
-    #rimss_imgParte = models.FileField('Constancia IMSS', upload_to='media/', default = 'None/no-img.jpg')
-    #curp_imgParte = models.FileField('CURP', upload_to='media/', default = 'None/no-img.jpg')
-    #cedula_fiscalimgParte = models.FileField('Constancia Régimen fiscal', upload_to='media/', default = 'None/no-img.jpg')
-    #titulo_profimgParte  = models.FileField('Título profesional', upload_to='media/', default = 'None/no-img.jpg')
-    #cedula_profimgParte  = models.FileField('Cédula profesional', upload_to='media/', default = 'None/no-img.jpg')
-    #comp_domimgParte  = models.FileField('Comprobante de domicilio', upload_to='media/', default = 'None/no-img.jpg')
+    

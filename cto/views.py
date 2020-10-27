@@ -1,7 +1,20 @@
+#from json.decoder import JSONDecoder
+#from typing import Any, Dict
+from django.conf.urls import url
+from django.urls.conf import path
+import docx
+import locale
+import json
+import requests
+import urllib
+from urllib import request, parse
+
+
 import io
+from operator import index
 from pathlib import Path
 import os
-from django.http import JsonResponse
+
 
 # Para utilizar algunas de las funciones de la librería
 from docx import Document
@@ -16,10 +29,8 @@ from docx.enum.style import WD_STYLE
 from docx.oxml.shared import OxmlElement, qn
 
 
-import docx
-import locale
-import json
-from json import loads
+
+
 
 from django.shortcuts import render,redirect, get_list_or_404
 from django.views import generic 
@@ -29,21 +40,20 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User               
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest, JsonResponse, HttpResponseServerError
 
 from datetime import datetime, date
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth import authenticate
+from requests.api import get
 from bases.views import SinPrivilegios
 from bases.views import *
 from .models import Departamento, Partes, Contratos, Doctos, Tipocontrato, Requisitos, Valida, Secuencia, Regimen
 from .forms import DepartamentoForm, PartesForm, ContratosForm
 from bases.views import SinPrivilegios
-from django.core.files.storage import FileSystemStorage
-
-
-
+from django.core.files.storage import FileSystemStorage, get_storage_class
+from api.serializer import TipocontratoSerializer
 
 class VistaBaseCreate(SuccessMessageMixin,SinPrivilegios,generic.CreateView):
     context_object_name = 'obj'
@@ -110,10 +120,13 @@ class PartesView(SinPrivilegios,generic.ListView):
     success_url= reverse_lazy("cto:partes_list")
     permission_required = "cto.view_partes"
 
+  
+    
     def get_queryset(self):
         current_userx = self.request.user.id
         #print(current_userx)
         queryset = Partes.objects.filter(user_id=current_userx)
+        xdepa=2
         for part in queryset:
             xdepa=part.claveDepartamento_id
         
@@ -124,7 +137,10 @@ class PartesView(SinPrivilegios,generic.ListView):
             if depa.claveDepartamento==xdepa:
                xr1=depa.rango1    
                xr2=depa.rango2
-             
+            else:
+               xr1=depa.rango1    
+               xr2=depa.rango2
+               print('error') 
         
         #print(xr1)
         #print(xr2)
@@ -142,11 +158,6 @@ class PartesView(SinPrivilegios,generic.ListView):
         return context      
     
     
-    
-
-
-
-
 class PartesNew(VistaBaseCreate):
     model= Partes
     template_name="cto/partes_form.html"
@@ -175,26 +186,40 @@ def partesInactivar(request,id):
         return HttpResponse("FAIL")
     
     return HttpResponse("FAIL")   
+
+
 class ContratosView(SinPrivilegios, generic.ListView):
     model = Contratos
     template_name = "cto/contrato_list.html"
     context_object_name = "obj"
     success_url= reverse_lazy("cto:contrato_list")
     permission_required="cto.view_contratos"
-        
+    
     def get_queryset(self):
-        
+        # r = requests.get('http://127.0.0.1:8000/api/v1/tipocontrato/7')
+        # print (r.content)
+        # print (r.status_code)
+        # print (r.headers)
+        # print (r.json)
+        #x=urllib.request.urlretrieve('http://127.0.0.1:8000/api/v1/tipocontrato/7')
+        #print(x)
+        tipocontrato = Tipocontrato.objects.filter(marcatipoContrato=True)
+        xtipo=0
+        for tipo in tipocontrato:
+            xtipo=tipo.id
+            print(xtipo)
         current_userx = self.request.user.id
         #conditions = dict(current_user=current_userx, uc_id=self.request.user) 
         #queryset = queryset.filter(**conditions)
         #return Contratos.objects.all()
         return Contratos.objects.filter(
-            Q(current_user=current_userx) | Q(uc_id=self.request.user)
+            (Q(current_user=current_userx) | Q(uc_id=self.request.user)), Q(tipocontrato_id=xtipo)
         )
         #return SpyorEnc.objects.filter(
         #    Q(current_user=current_userx) | Q(uc_id=self.request.user) | Q(el_jefe=current_userx)
         #)
         
+    
     
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -202,6 +227,7 @@ class ContratosView(SinPrivilegios, generic.ListView):
         # Get the blog from id and add it to the context
         context['some_data'] = Partes.objects.all()
         context['some_data2'] = Departamento.objects.all()
+        context['some_data3'] = Tipocontrato.objects.filter(marcatipoContrato=True)
         return context                   
 
 @login_required(login_url='/login/')
@@ -283,18 +309,18 @@ def contratos2(request,contrato_id=None):
         r6 = int(secuencia[40:45])
         f6 = secuencia[45:48]
 
-        print(r1)
-        print(f1)
-        print(r2)
-        print(f2)
-        print(r3)
-        print(f3)
-        print(r4)
-        print(f4)
-        print(r5)
-        print(f5)
-        print(r6)
-        print(f6)
+        #print(r1)
+        #print(f1)
+        #print(r2)
+        #print(f2)
+        #print(r3)
+        #print(f3)
+        #print(r4)
+        #print(f4)
+        #print(r5)
+        #print(f5)
+        #print(r6)
+        #print(f6)
     else:
         print ("secuencia no asignada")    
 
@@ -1198,4 +1224,29 @@ def contratoGracont(request,id):
         return HttpResponse("FAIL")
     
     
-    return HttpResponse("FAIL")        
+    return HttpResponse("FAIL") 
+
+
+
+@login_required(login_url="/login/")
+@permission_required("cto.change_contratos",login_url="/login/")
+
+def marcaContrato(request,id):
+    tipocontratos = Tipocontrato.objects.filter(pk=id).first()
+     
+   
+    if request.is_ajax and request.method == "POST":
+        
+                
+        data = json.loads(request.body)
+        #print(data)
+    
+        if Tipocontrato.tipoContrato:
+           Tipocontrato.marcatipoContrato = True
+           Tipocontrato.save()
+           return HttpResponse("OK")
+        
+        return HttpResponse("FAIL")
+    
+    
+    return HttpResponse("FAIL")         

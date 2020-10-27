@@ -38,6 +38,7 @@ urlpatterns = [
 
     #path('partes/new2',partes2, name="sujeto_new"),
     path('contratos/gracont/<int:id>',contratoGracont, name="contrato_gracont"),
+    
    
 
 
