@@ -4,10 +4,12 @@
 
 
  {% block top_bar %}
-         <p class="m-0 font-weight-bold text-primary">  user-> {{ user.username }} &nbsp;&nbsp; {{ user.last_name }} {{ user.first_name }} {{ secuencia_data }}</p>
-       
-             
- {% endblock top_bar %}
+         
+         <p class="m-0 font-weight-bold text-secundary">  user-> {{ user.username }} &nbsp;&nbsp; {{ user.last_name }} {{ user.first_name }} {{ secuencia_data }}</p>
+      {% for depa in departamentos %}   
+         <p class="m-0 font-weight-bold text-">   {{ depa.claveDepartamento }} &nbsp;&nbsp; {{ depa.nombreDepartamento }}  </p> 
+      {% endfor  %}
+  {% endblock top_bar %}
 
 {% block page_content %}
 
@@ -71,28 +73,27 @@
                     <div class="content">
                         <div class="row badge-primary">
                            
-                            <div class="col-lg-12 text-center ">
-                               CONTRATO DE HONORARIOS ASIMILADOS A SALARIOS
+                            <div class="col-lg-12 text-left ">
+                               #Contrato  &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;   Fecha    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;  Status
                             </div>
                          
                         </div>
                         
                         <div class="row badge-primary">
-                            <div class="col-lg-1 text-center">
+                            {% comment %} <div class="col-lg-1 text-center">
                                #
-                            </div>
+                            </div> {% endcomment %}
                             <div class="col-sm-3 pl-2">
-                                 <input type="number" name="enc_id" id="enc_id" readonly class="form-control  text-center"
-                                 value = "enc.id" >
+                                 <input type="number" name="enc_id" id="enc_id" readonly class="form-control  text-center" value = {{ enc.id }} >
                             
                             </div> 
-                            <div class="col-sm-3 form-group pl-0 pr-0" >
+                            <div class="col-sm-4 form-group pl-0 pr-0" >
                                     <input type="text"  name="datecontrato" id="datecontrato" class="form-control form-control-user  pl-0 text-center " 
                                         value="{{ enc.datecontrato|date:'Y-m-d'}}" readonly >
                             </div>
-                            <div class="col-lg-2  text-center">
+                            {% comment %} <div class="col-lg-2  text-center">
                                Status:
-                            </div>
+                            </div> {% endcomment %}
                             <div class="col-lg-3 text-center" >
                                 <input type="text" class="form-control" readonly  name="status" id="status"  style="color:blue;font-weight:bold;font-size:20px"
                                     value="{{ enc.status }}">
@@ -102,17 +103,17 @@
                            
                         <div class="row">  
                            
-                            <div class="col-lg-2  text-left">
+                            <div class="col-lg-3  text-left">
                                Sujeto:
                                
                             </div>
                                
                             {% if enc.parte2 %}
-                                <div class="col-lg-10 form-group" >
+                                <div class="col-lg-9 form-group" >
                                    {{ enc.parte2 }}
                                 </div>
 
-                              {% else %}
+                            {% else %}
                                 <div class="col-lg-7 form-group">
                                     <select name="enc_nombreParte" id="enc_nombreParte" class="form-control" required>
                                         <option value="0">Buscar</option>
@@ -135,28 +136,36 @@
                        
                     <div class="row" p-2>    
                       
-                        <div class="col-lg-6  text-left">
+                        <div class="col-lg-7  text-left">
                                Fecha de inicio del contrato:
                                
                         </div>
-                        
+                      {% if enc.datecontrato_ini %}
+                        <div class="col-lg-5 form-group" >
+                                   {{ enc.datecontrato_ini|date:'Y-m-d' }}
+                        </div>
+                      {% else %}
                         <div class="col-lg-5" >
                             <input type="text" style="width: 8rem;" name="enc_datecontrato_ini" id="enc_datecontrato_ini" placeholder="Fecha inicial" class="form-control form-control-user text-center" value="{{ enc.datecontrato_ini|date:'Y-m-d' }}"  required>
                         </div>
-                      
+                      {% endif %}
                     </div>
                     
                     <div class="row" p-2>    
                       
-                        <div class="col-lg-6  text-left">
+                        <div class="col-lg-7  text-left">
                                Fecha del fin del contrato:
                                
                         </div>
-                        
+                        {% if enc.datecontrato_fin %}
+                        <div class="col-lg-5 form-group" >
+                                   {{ enc.datecontrato_fin|date:'Y-m-d' }}
+                        </div>
+                      {% else %}
                         <div class="col-lg-5" >
                             <input type="text" style="width: 8rem;" name="enc_datecontrato_fin" id="enc_datecontrato_fin" placeholder="Fecha final" class="form-control form-control-user text-center" value="{{ enc.datecontrato_fin|date:'Y-m-d' }}" required>
                         </div>
-                      
+                      {% endif %}
                     </div>   
                         
                      <div class="row" p-2>
@@ -165,11 +174,13 @@
                                Importe total del contrato:
                                
                         </div>
-
+                      {% if enc.importeContrato %}
+                        {{ enc.importeContrato}}
+                      {% else %}
                         <div class="col-lg-5">
                             <input type="float"  class="form-control text-right" name="enc_importeContrato" id="enc_importeContrato" value="{{ enc.importeContrato }}" required>
                         </div>
-                    
+                      {% endif %}
                     </div> 
                     
                     <div class="row" p-2>
@@ -178,11 +189,13 @@
                                Número de pagos:
                                
                         </div>
-
+                       {% if enc.npContrato %}
+                          {{ enc.npContrato }}
+                       {% else %}
                         <div class="col-lg-4">
                             <input type="number"  class="form-control text-right"  name="enc_npContrato" id="enc_npContrato" value="{{ enc.npContrato }}"  required>
                         </div>
-                    
+                      {% endif %}
                     </div>  
 
                        <div class="row" p-2>
@@ -191,88 +204,66 @@
                                Importe por pago:
                                
                         </div>
-
+                      {% if enc.imppContrato %}
+                          {{ enc.imppContrato }}
+                      {% else %}
                         <div class="col-lg-5">
                             <input type="float"  class="form-control text-right"  name="enc_imppContrato" id="enc_imppContrato"  value="{{ enc.imppContrato }}"  required>
                         </div>
-                    
+                      {%endif%}
                     </div>  
 
                     <div class="row" p-2>
 
                         <div class="col-lg-6  text-left">
                                Total de horas:
-                               
                         </div>
-
+                       {% if enc.totalhorasContrato %}
+                            {{ enc.totalhorasContrato }}
+                       {% else %}
                         <div class="col-lg-4">
                             <input type="number"  class="form-control text-right"  name="enc_totalhorasContrato" id="enc_totalhorasContrato" value="{{ enc.totalhorasContrato }}" required>
                         </div>
-                    
+                       {% endif %}
                     </div>
 
+
                     <div class="row">  
-                           
                             <div class="col-lg-3  text-left">
                                Testigo 1:
-                               
                             </div>
-                            
-                            {% if enc.status == "CAP" %}
-                            
-                            <div class="col-lg-9 form-group">
-                                <select name="enc_testigoContrato1" id="enc_testigoContrato1" class="form-control" required>
-                                    <option value="0">Buscar</option>
-                                    {% for item in fun3 %}
-                                        <option value="{{item.nombreParte}}">{{ item.nombreParte }} </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                            {% if enc.id %}
+                              {{ enc.testigoContrato1 }}
                             {% else %}
-                                <div class="col-lg-9 form-group" >
-                                   {{ enc.testigoContrato1 }}
-                                </div>
-
-                            {% endif%}
-                          
-                             
+                              <div class="col-lg-8 form-group">
+                                  <input type="text"  name="enc_testigoContrato1" id="enc_testigoContrato1" class="form-control form-control-user  pl-0 text-left " value = "{{ enc.testigoContrato1 }}" required >
+                              </div>
+                            {% endif %}
+                    
                     </div>
-
                     <div class="row">  
-                           
                             <div class="col-lg-3  text-left">
                                Testigo 2:
-                               
                             </div>
-                            
-                            {% if enc.status == "CAP" %}
-                            
-                            <div class="col-lg-9 form-group">
-                                <select name="enc_testigoContrato2" id="enc_testigoContrato2" class="form-control" required>
-                                    <option value="0">Buscar</option>
-                                    {% for item in fun3 %}
-                                        <option value="{{item.nombreParte}}">{{ item.nombreParte }} </option>
-                                    {% endfor %}
-                                </select>
-                            
-                            </div>
+                            {% if enc.id %}
+                              {{ enc.testigoContrato2 }}
                             {% else %}
-                                <div class="col-lg-9 form-group" >
-                                   {{ enc.testigoContrato2 }}
-                                </div>
-
-                            {% endif%}
-                          
-                             
+                              <div class="col-lg-8 form-group">
+                                  <input type="text"  name="enc_testigoContrato2" id="enc_testigoContrato2" class="form-control form-control-user  pl-0 text-left " value = "{{ enc.testigoContrato2 }}" required >
+                              </div>
+                            {% endif %}
                     </div>
-
+                    
 
                         <hr>
-                   
-                    <button type="button" class="btn btn-primary" onclick="gracont({{enc.id}})">Enviar</button>
-                    
+                      
+                        
+                     
+                    {% comment %} <button type="button" class="btn btn-primary" onclick="gracont({{enc.id}})">Enviar</button>
+                     {% endcomment %}
             <!-- Modal -->            
                         <div class="row p-2">
+                            
                             {% if enc.fcap == null and enc.rcap == enc.current_user  and enc.uc_id == enc.current_user  %}
                                 
                                 
@@ -307,7 +298,7 @@
                                     </div>
                                 </div>
                             {% else %}
-                                {% if enc.fstep1 == null and enc.rstep1 == user.id and enc.imp_total and enc.uc_id == enc.devuelto_por %}
+                                {% if enc.fstep1 == null and enc.rstep1 == user.id and enc.importeContrato and enc.uc_id == enc.devuelto_por %}
                                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCentered">
                                          Fin de proceso de {{ enc.astep1 }} 
                                 </button>
@@ -956,25 +947,33 @@ function gracont(id)
   
     var data = {id:id,
                enc_datecontrato_ini : $("input[name='enc_datecontrato_ini']").val(),
-               enc_datecontrato_fin : $("input[name='enc_datecontrato_fin']").val() };
+               enc_datecontrato_fin : $("input[name='enc_datecontrato_fin']").val(),
+               enc_importeContrato : $("input[name='enc_importeContrato']").val(),
+               enc_npContrato : $("input[name='enc_npContrato']").val(),
+               enc_imppContrato : $("input[name='enc_imppContrato']").val(),
+               enc_totalhorasContrato : $("input[name='enc_totalhorasContrato']").val(),
+               enc_testigoContrato1 : $("input[name='enc_testigoContrato1']").val(),
+               enc_testigoContrato2 : $("input[name='enc_testigoContrato2']").val()
+                };
     data = JSON.stringify(data);
     alert(data)
     var token = '{{csrf_token}}';
-    alert(token);
+    // alert(token);
     // alert(id);
     
     $.ajax({
       headers : {"X-CSRFToken": token},
       type:"POST",
       url:"/cto/contratos/gracont/"+id,
-      data: data,
-           
+      data: data, 
+     
       success: function(response){
         if(response==="OK")
         {
-           window.location.href = "/cto/contratos/";
+            
+          
         }
-        else{|
+        else{
           mensaje("Error Intentado guardar");
         }
       },

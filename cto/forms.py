@@ -8,7 +8,7 @@ from .models import Departamento, Partes, Contratos
 class DepartamentoForm(forms.ModelForm):
     class Meta:
         model=Departamento
-        fields=['claveDepartamento','claveCampus','claveArea','nombreDepartamento','f001', 'f002','f003','estado']
+        fields=['claveDepartamento','claveCampus','claveArea','nombreDepartamento','f001', 'f002','f003', 'testigoUsual1', 'testigoUsual2','estado']
         exclude = ['um','fm','uc','fc']
 
 
@@ -18,6 +18,13 @@ class DepartamentoForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+
+        self.fields['nombreDepartamento'].widget.attrs['style'] = "width:400px"
+        self.fields['testigoUsual1'].widget.attrs['style'] = "width:400px"
+        self.fields['testigoUsual2'].widget.attrs['style'] = "width:400px"
+        self.fields['f001'].widget.attrs['style'] = "width:400px"
+        self.fields['f002'].widget.attrs['style'] = "width:400px"
+        self.fields['f003'].widget.attrs['style'] = "width:400px"
 
 class PartesForm(forms.ModelForm):
         
@@ -62,10 +69,7 @@ class PartesForm(forms.ModelForm):
         self.fields['domicilioParte'].widget.attrs['verbose_name'] = "Domicilio"
 
 class ContratosForm(forms.ModelForm):
-    #testigoContrato1 = forms.ModelChoiceField(
-    #    queryset=Partes.objects.filter(estado=True)
-    #        .order_by('nombreParte')
-    #    )
+    
     datecontrato = forms.DateField(
             label= "Fecha del Contrato",
              
@@ -102,7 +106,7 @@ class ContratosForm(forms.ModelForm):
     class Meta:
         model=Contratos
         fields=['id', 'tipocontrato','datecontrato','parte2' , 'datecontrato_ini', 'datecontrato_fin', 'importeContrato', 'status', 'npContrato', 'imppContrato', 'totalhorasContrato',
-        'testigoContrato1','testigoContrato2']
+        'testigoContrato1',  'testigoContrato2']
         exclude = ['um','fm','uc','fc']
    
     def __init__(self, *args, **kwargs):

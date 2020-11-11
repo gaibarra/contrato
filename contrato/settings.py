@@ -57,9 +57,9 @@ INSTALLED_APPS = [
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
+   
     'cto.middleware.CtoMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -69,6 +69,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_userforeignkey.middleware.UserForeignKeyMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'contrato.urls'
@@ -198,3 +199,7 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
 ]
+
+DEBUG_TOOLBAR_CONFIG = {
+     "SHOW_TOOLBAR_CALLBACK" : lambda request: True,
+ }

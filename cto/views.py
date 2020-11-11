@@ -140,6 +140,7 @@ class PartesView(SinPrivilegios,generic.ListView):
             else:
                xr1=depa.rango1    
                xr2=depa.rango2
+               print(xdepa)
                print('error') 
         
         #print(xr1)
@@ -194,24 +195,28 @@ class ContratosView(SinPrivilegios, generic.ListView):
     context_object_name = "obj"
     success_url= reverse_lazy("cto:contrato_list")
     permission_required="cto.view_contratos"
+   
     
     def get_queryset(self):
+        xtipo=0
+        tipocontrato = Tipocontrato.objects.filter(marcatipoContrato=True)
+        for x in tipocontrato:
+            if x.marcatipoContrato == True:
+               xtipo=x.id
+               #print(xtipo)
         # r = requests.get('http://127.0.0.1:8000/api/v1/tipocontrato/7')
         # print (r.content)
         # print (r.status_code)
         # print (r.headers)
         # print (r.json)
         #x=urllib.request.urlretrieve('http://127.0.0.1:8000/api/v1/tipocontrato/7')
-        #print(x)
-        tipocontrato = Tipocontrato.objects.filter(marcatipoContrato=True)
-        xtipo=0
-        for tipo in tipocontrato:
-            xtipo=tipo.id
-            print(xtipo)
+        #print(x)8
+        
         current_userx = self.request.user.id
         #conditions = dict(current_user=current_userx, uc_id=self.request.user) 
         #queryset = queryset.filter(**conditions)
         #return Contratos.objects.all()
+       
         return Contratos.objects.filter(
             (Q(current_user=current_userx) | Q(uc_id=self.request.user)), Q(tipocontrato_id=xtipo)
         )
@@ -222,6 +227,7 @@ class ContratosView(SinPrivilegios, generic.ListView):
     
     
     def get_context_data(self, **kwargs):
+       
         # Call the base implementation first to get a context
         context = super(ContratosView, self).get_context_data(**kwargs)
         # Get the blog from id and add it to the context
@@ -238,20 +244,20 @@ def contratos2(request,contrato_id=None):
     detalle = {}
     secuencia_data = {}
     xUsuario = (request.user.id)
-    print(xUsuario)
+    #print(xUsuario)
    
     partes = Partes.objects.filter(estado=True, user=xUsuario)    
     
     p=partes.first()
-    print (p)
+    #print (p)
     
     
     d1 = p.claveDepartamento
     dx = p.claveDepartamento_id
     rfcparte = (p.rfc)
-    print(rfcparte)
+    #print(rfcparte)
     
-    print(d1)
+    #print(d1)
    
    
     
@@ -263,16 +269,18 @@ def contratos2(request,contrato_id=None):
     r1= (d2.rango1)
     r2= (d2.rango2)
     secuencia = (d2.f001)
-
-    print (d3)
-    print(secuencia)
+    #print(d2.testigoUsual1)
+    #print(d2.testigoUsual2)
+    
+    #print (d3)
+    #print(secuencia)
     
     
     partes3 =Partes.objects.filter(Q(estado=True),  Q(claveDepartamento_id__gte=r1), Q(claveDepartamento_id__lte=r2) ).order_by('nombreParte')
     
     
     partes2 =Partes.objects.filter(estado=True).order_by('nombreParte')
-    print (partes2)
+    #print (partes2)
     
     
 
@@ -291,11 +299,11 @@ def contratos2(request,contrato_id=None):
         else:
             funcionario =Partes.objects.filter( user_id=r2)
         
-        print(funcionario)
+        #print(funcionario)
         a2 = funcionario.first()
-        print(a2)
+        #print(a2)
         a3 = (a2.id )
-        print (a3)
+        #print (a3)
         fun=Partes.objects.get(pk=a3)
         r3 = int(secuencia[16:21])
         f3 = secuencia[21:24]
@@ -348,8 +356,8 @@ def contratos2(request,contrato_id=None):
                 'imppContrato':0.00,
                 'vhppContrato':285.00,
                 'totalhorasContrato':"",
-                'testigoContrato1':"",
-                'testigoContrato2':"",
+                'testigoContrato1': d2.testigoUsual1,
+                'testigoContrato2': d2.testigoUsual2,
                 'versionContrato':"",
         
                 'status':"CAP",
@@ -379,6 +387,7 @@ def contratos2(request,contrato_id=None):
         else:
             
             encabezado = {
+                
                 'id':enc.id,
                 'uc_id':enc.uc_id,
                 'tipocontrato':enc.tipocontrato,
@@ -422,12 +431,12 @@ def contratos2(request,contrato_id=None):
                 'astep6':enc.astep6,
             
                 'devuelto_por':enc.devuelto_por,
-                
+                'current_user':enc.current_user,
                 
 
             }
 
-     
+       
         
         detalle=Doctos.objects.filter(contrato=enc)
        
@@ -459,8 +468,8 @@ def contratos2(request,contrato_id=None):
         imppContrato = request.POST.get("enc_imppContrato")
         vhppContrato = 285
         totalhorasContrato = request.POST.get("enc_totalhorasContrato")
-        testigoContrato1 = request.POST.get("enc_testigoContrato1")
-        testigoContrato2 = request.POST.get("enc_testigoContrato2")
+        testigoContrato1 = d2.testigoUsual1
+        testigoContrato2 = d2.testigoUsual1
         versionContrato = request.POST.get("versionContrato")
         status = request.POST.get("status")
        
@@ -492,8 +501,10 @@ def contratos2(request,contrato_id=None):
                 imppContrato = imppContrato,
                 vhppContrato = vhppContrato,
                 totalhorasContrato = totalhorasContrato,
-                testigoContrato1 = testigoContrato1,
-                testigoContrato2 = testigoContrato2,
+                testigoContrato1 = d2.testigoUsual1,
+                testigoContrato2 = d2.testigoUsual2,
+                
+
 
                 status = status,
                 rcap = xUsuario,
@@ -1218,6 +1229,20 @@ def contratoGracont(request,id):
            contratos.datecontrato = datetime.today()
            contratos.datecontrato_ini = data["enc_datecontrato_ini"]
            contratos.datecontrato_fin = data["enc_datecontrato_fin"]
+           xiC = data["enc_importeContrato"]
+           print(xiC)
+           print(type(xiC))
+           #contratos.importeContrato = data["enc_importeContrato"]
+           
+           
+           
+           contratos.npContrato = data["enc_npContrato"]
+           #contratos.imppContrato = data["enc_imppContrato"]
+           contratos.totalhorasContrato = data["enc_totalhorasContrato"]
+           #contratos.testigoContrato1 = data["enc_testigoContrato1"]
+           contratos.testigoContrato2 = data["enc_testigoContrato2"]
+
+
            contratos.save()
            return HttpResponse("OK")
         

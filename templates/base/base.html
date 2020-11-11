@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="{% static 'base/vendor/jquery_confirm/jquery-confirm.min.css' %}">
 
   <!-- XDSoft DateTimePicker -->  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous">  
 
   <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" rel="stylesheet" />
@@ -96,7 +96,7 @@
             
             <h6 class="collapse-header"></h6>
             
-            {% if perms.cmp.view_proveedor %}
+            {% if perms.cto.view_contratos %}
             {% comment %} <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Docentes con Reconocimiento Ant</a> {% endcomment %}
             <div class="dropdown">
              <button class="btn btn-secondary dropdown-toggle badge-info "
@@ -115,7 +115,7 @@
 
             <h6 class="collapse-header"></h6>
             
-            {% if perms.fac.view_cliente %}
+            {% if perms.cto.view_contratos %}
             {% comment %} <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Asimilados</a> {% endcomment %}
             <div class="dropdown">
   				<button class="btn btn-secondary dropdown-toggle badge-info"
@@ -132,7 +132,7 @@
           
             <h6 class="collapse-header"></h6>
             
-            {% if perms.fac.view_cliente %}
+            {% if perms.cto.view_contratos %}
             {% comment %} <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Empresas</a> {% endcomment %}
             <div class="dropdown">
   				<button class="btn btn-secondary dropdown-toggle badge-info"
@@ -141,7 +141,8 @@
     					Externos
   				</button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu1" >
-                    <a class="dropdown-item" href="{% url 'cto:contrato_list' %}">CONTRATO DE HONORARIOS ASIMILADOS A SALARIOS</a>
+                    
+                    <a class="dropdown-item" id="1" href="{% url 'cto:contrato_list' %}">CONTRATO DE HONORARIOS ASIMILADOS A SALARIOS</a>
                     <a class="dropdown-item" href="#!">CONTRATO DE PRESTACIÓN DE SERVICIOS PROFESIONALES EDUCATIVOS</a>
                 </div>
             </div>
@@ -161,10 +162,10 @@
         <div id="collapseCompras" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Departamentos</h6>
-            <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Departamentos</a>
+            <a class="collapse-item" href="{% url 'cto:departamento_list' %}">Departamentos</a>
 
             <h6 class="collapse-header">Sujetos</h6>
-            <a class="collapse-item" href="{% url 'cto:contrato_list' %}">Sujetos de Contrato</a>
+            <a class="collapse-item" href="{% url 'cto:partes_list' %}">Sujetos de Contrato</a>
 
           </div>
         </div>
@@ -571,17 +572,16 @@
       
       $.ajax({
       headers : {"X-CSRFToken": token},
-      type:"GET",
+      type:"POST",
       url:"/api/v1/tipocontrato/"+data,
       data: data,
-           
       success: function(response){
         if(response==="OK")
         {
            window.location.href = "/cto/contratos/";
         }
         else{
-          mensaje("Error Intentado guardar");
+          
         }
       },
       error: function(jqXHR, textStatus, errorThrow){
@@ -595,19 +595,39 @@
 });
 </script>
 
-  
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#1").click(function(){
+      var data = $(this).attr("id")
+      var token = '{{csrf_token}}';
+      
+      $.ajax({
+      headers : {"X-CSRFToken": token},
+      type:"POST",
+      url:"/api/v1/tipocontrato/"+data,
+      data: data,
+      success: function(response){
+        if(response==="OK")
+        {
+           window.location.href = "/cto/contratos/";
+        }
+        else{
+          
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrow){
+        console.log(textStatus, errorThrow);
+        mensaje(errorThrow,'red');
+        cerrar_modal();
+      }
+    });
+    
+  });
+});
+</script>  
   
   {% endblock%}
   {% block js_page %} {% endblock %}
-
-
-
-
-
-
-
-
-
 
 
 </body>

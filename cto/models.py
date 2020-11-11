@@ -113,6 +113,9 @@ class Departamento(ClaseModelo2):
     rango1 = models.IntegerField('Rango inicial', blank=True, null=True)  
     rango2 = models.IntegerField('Rango final', blank=True, null=True)
     direccion = models.IntegerField('Dirección', blank=True, null=True)
+    testigoUsual1 = models.CharField('Testigo usual 1', max_length=100, blank=True, null=True)
+    testigoUsual2 = models.CharField('Testigo usual 2', max_length=100, blank=True, null=True)
+
 
     def __str__(self):
         return '{}'.format(self.claveDepartamento + "  " + self.nombreDepartamento )
@@ -307,7 +310,9 @@ class Contratos(ClaseModelo2):
     cstep6 = RichTextField('Comentarios 6', blank=True, null=True, default="")
     devuelto_por = models.IntegerField('Devuelto por', blank=True, null=True)
     actividadesContrato = RichTextField('Actividades', blank=True, null=True)
+    
 
+    
     def __str__(self):
         return '{}'.format(self.id)
 
