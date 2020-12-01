@@ -23,7 +23,7 @@
         
         {% for x in fun2 %}
             {% if x.user_id == enc.rstep1 %}
-               
+              
               <a class="btn btn-success" href="#"><i cass="far fa-calendar-plus"></i>{{ enc.astep1 }} {{x.usuario}} <br> {{ enc.fstep1 |date:'d-M-y H:i'}}</a>
             {% endif %}                      
         {% endfor %} 
@@ -101,33 +101,27 @@
                          </div>
                                              
                            
-                        <div class="row">  
+                        <div class="row"  >  
                            
-                            <div class="col-lg-3  text-left">
-                               Sujeto:
-                               
-                            </div>
+                           
                                
                             {% if enc.parte2 %}
-                                <div class="col-lg-9 form-group" >
-                                   {{ enc.parte2 }}
+                                <div class="col-lg-10 form-group" >
+                                   {{ enc.parte2 }} 
                                 </div>
 
                             {% else %}
-                                <div class="col-lg-7 form-group">
+                                <div class="col-lg-10 form-group">
                                     <select name="enc_nombreParte" id="enc_nombreParte" class="form-control" required>
-                                        <option value="0">Buscar</option>
+                                        <option value="0">Seleccione el Sujeto del contrato</option>
                                         {% for item in fun3 %}
                                             <option value="{{item.id}}">{{ item.nombreParte }} </option>
-                                        {% endfor %}
+                                        {% endfor %} 
                                      </select>
                                 
                                 
                                 </div>
-                                <div class="col-lg-3 ">
-                                    <a href="{% url 'cto:partes_list' %}" class="btn btn-success">Altas y cambios</a>
-
-                                </div>
+                                
                           
                             {% endif%}
                           
@@ -283,10 +277,14 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            
-                                          <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep1 }} ?</p>
-                                            
+                                            {% if   enc.astep1 == "DIE" %}  
+                                              <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep1 }} Dirección de Escuela ?</p>
+                                            {% endif %}
+                                            {% if   enc.astep1 == "DIC" %}  
+                                              <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep1 }} Dirección de Campus ?</p>
+                                            {% endif %}
                                         </div>
+                                           
                                         <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                                           
@@ -314,8 +312,12 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            
-                                          <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep2 }} ?</p>
+                                            {% if   enc.astep2 == "DIE" %}  
+                                              <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep2 }} Dirección de Escuela ?</p>
+                                            {% endif %}
+                                            {% if   enc.astep2 == "DIC" %}  
+                                              <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep2 }} Dirección de Campus ?</p>
+                                            {% endif %}
                                             
                                         </div>
                                         <div class="modal-footer">
@@ -323,7 +325,7 @@
                                           
                                           <button type="button" class="btn btn-primary" onclick="avanza({{enc.id}})">Enviar</button>
                                            
-                                        {% if enc.astep1 == "REV" or  enc.astep1 == "AUT"  %}                               
+                                        {% if enc.astep1 == "REV" or  enc.astep1 == "DIE" or  enc.astep1 == "DIC" %}                               
                                            <button type="button" class="btn btn-danger" onclick="devuelve({{enc.id}})">Devolver</button> 
                                         {% endif %}
                                               
@@ -333,7 +335,7 @@
                                     </div>
                                 </div>
                                 {% else %}
-                                    {% if enc.fstep2 == null and enc.rstep2 == user.id and enc.imp_total  and enc.fstep1 != null and enc.uc_id == enc.devuelto_por %}
+                                    {% if enc.fstep2 == null and enc.rstep2 == user.id and enc.fstep1 != null and enc.uc_id == enc.devuelto_por %}
                                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCentered">
                                          Fin de proceso de {{ enc.astep2 }} 
                                 </button>
@@ -350,7 +352,12 @@
                                         </div>
                                         <div class="modal-body">
                                             
-                                          <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep3 }} ?</p>
+                                          {% if   enc.astep3 == "REV" %}  
+                                              <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep3 }} Jurídico Contabilidad ?</p>
+                                            {% endif %}
+                                            {% if   enc.astep3 == "DIC" %}  
+                                              <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep3 }} Dirección de Campus ?</p>
+                                            {% endif %}
                                             
                                         </div>
                                         <div class="modal-footer">
@@ -358,7 +365,7 @@
                                           
                                           <button type="button" class="btn btn-primary" onclick="avanza({{enc.id}})">Enviar</button>
                                            
-                                           {% if enc.astep2 == "REV" or  enc.astep2 == "AUT"  %}                               
+                                           {% if enc.astep2 == "REV" or  enc.astep2 == "DIE" or  enc.astep2 == "DIC" %}                               
                                            
                                            <button type="button" class="btn btn-danger" onclick="devuelve({{enc.id}})">Devolver</button> 
                                             
@@ -368,7 +375,7 @@
                                     </div>
                                 </div>
                                     {% else %}
-                                        {% if enc.fstep3 == null and enc.rstep3 == user.id and enc.imp_total and enc.fstep2 != null and enc.uc_id == enc.devuelto_por %}
+                                        {% if enc.fstep3 == null and enc.rstep3 == user.id  and enc.fstep2 != null and enc.uc_id == enc.devuelto_por %}
                                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCentered">
                                          Fin de proceso de {{ enc.astep3 }} 
                                 </button>
@@ -385,7 +392,12 @@
                                         </div>
                                         <div class="modal-body">
                                             
-                                          <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep4 }} ?</p>
+                                          {% if   enc.astep4 == "REV" %}  
+                                              <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep3 }} Jurídico Contabilidad ?</p>
+                                            {% endif %}
+                                            {% if   enc.astep4 == "REH" %}  
+                                              <p class="m-0 font-weight-bold text-primary"> Firma electrónica y enviar a--> {{ enc.astep4 }} Recursos Humanos ?</p>
+                                            {% endif %}
                                             
                                         </div>
                                         <div class="modal-footer">
@@ -403,7 +415,7 @@
                                     </div>
                                 </div>
                                        {% else %}
-                                            {% if enc.fstep4 == null and enc.rstep4 == user.id and enc.imp_total and enc.fstep3 != null and enc.uc_id == enc.devuelto_por  %}
+                                            {% if enc.fstep4 == null and enc.rstep4 == user.id and enc.fstep3 != null and enc.uc_id == enc.devuelto_por  %}
                                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCentered">
                                          Fin de proceso de {{ enc.astep4 }} 
                                 </button>
@@ -632,7 +644,7 @@
                            
                             <tr>
                                 <td>
-                                <iframe src="{{ item.pdf.url }}" width="400" height="400"  style="border:1px solid black;" allowfullscreen>
+                                <iframe src="{{ item.pdf.url }}" width="500" height="500"  style="border:1px solid black;" allowfullscreen>
                                 </iframe>
                                 
                                 
@@ -669,69 +681,12 @@
 </form>
 {% endblock %}
 {% block js_page %}
+
+
+
+
 <script>
      
-    
-    function buscarFuncionario()
-    {
-        if ($("#enc_nombreParte").val()==="0" || $("#enc_nombreParte").val()===null){
-            mensaje("Sujeto No Seleccionado",'red');
-            return false;
-        }
-
-        var codigo = $("#codigo").val();
-        if(codigo===""){
-            return false;
-        }
-
-        var path = "{% url 'api:contratos_list' %}" + codigo;
-        $.ajax({
-            type:"GET",
-            url: path,
-            success: function(r){
-                
-
-                if(!r.estado){
-                    mensaje("Funcionario está inactivo",'orange')
-                    $("#codigo").val("");
-                    $("#nombreParte").val("");
-                    
-                    $("#codigo").focus();
-                    return false;
-                }
-
-                $("#codigo").val(r.codigo);
-                $("#nombreParte").val(r.nombreParte);
-                
-                $("#cantidad").focus();
-
-            },
-            error: function(a,b,c){
-                console.log(a);
-                // console.log(b);
-                // console.log(c);
-                // console.log(a.status)
-                // console.log(a.responseText.detail);
-                // a.responseText["detail"]
-                // mensaje(c,'red');
-                if(a.status==404){
-                    mensaje(" -" + codigo + "- No Encontrado o No Existe",'red');
-                    $("#codigo").val("");
-                    $("#nombre_funcionario").val("");
-                    
-                    $("#codigo").focus();
-                }
-
-            }
-
-        });
-    }
-    
-    
-    
-    
-    
-    
     
     $(function () {
         $("#enc_datecontrato_ini").datetimepicker({
@@ -750,10 +705,11 @@
             timepicker:false
         });
         $("#sidebarToggle").click();
+        
         $('#enc_nombreParte').select2({
             selectOnBlur: true,
-            placeholder: "Seleccione Sujeto del contrato",
-            allowClear: true
+            placeholder: "Seleccione el Sujeto del contrato",
+            allowClear: true,
            
         });
         
@@ -777,39 +733,9 @@
             allowClear: true
         });    
 
-        $('#xdepartamento').select2({
-            placeholder: "Seleccione Depto",
-            allowClear: true
-            
-        });
+       
 
-        $("#btnBuscar").click(function(e){
-            if ($("#enc_nombreParte").val()==="0"){
-                mensaje("Seleccione el Beneficiario",'red');
-                return false;
-            }
-            abrir_modal("{% url 'cto:buscar_parte' %}");
-        });
-
-        $("#codigo").keypress(function(e){
-            if(e.keyCode===13){
-                e.preventDefault();
-                buscarFuncionario();
-            }
-        });
-
-        
-      
-        
-        $("#Folio").click(function(e){
-            if ($("#enc_nombreParte").val()===null ){
-                mensaje("Seleccione el Beneficiario",'red');
-                return false;
-            
-            }
-        });
-        
-        
+       
 
         $("#enc_id").val("{{ enc.id }}");
         

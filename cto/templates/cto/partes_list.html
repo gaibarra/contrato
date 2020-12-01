@@ -21,7 +21,7 @@
     <div class="alert alert-info">No Hay Registros</div>
     {% endif %}
     <div class="buttons-toolbar">
-        <a class="dropdown-item" onclick="return abrir_modal('{% url 'cto:partes_new' %}')" href="#"><i class="far fa-calendar-plus"></i> Nuevo</a>
+        <a class="dropdown-item" onclick="return abrir_modal('{% url 'cto:partes_new' %}')" href="#"><i class="far fa-calendar-plus"></i>Nuevo</a>
     </div>
 
     <table 
@@ -53,13 +53,8 @@
         <tr>
           <td>{{ item.codigo }}</td>
           <td>{{ item.claveDepartamento_id }}</td>
-      
           <td>{{ item.nombreParte }}</td>
-         
-
-        
           <td>{{ item.rfc }}</td>
-
           <td >{#item.estado|yesno:"Activo,Inactivo"#}
             <div onclick="inactivar({{item.id}})">
                 {% if item.estado %}

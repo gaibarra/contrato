@@ -424,13 +424,14 @@
         </nav>
         {% endblock top_bar %}
         <!-- End of Topbar -->
-
+        {% include 'cto/messages.html' %}
+        
         <!-- Begin Page Content -->
         {% block page_content %}
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">Blank Page</h1>
+          {% comment %} <h1 class="h3 mb-4 text-gray-800">Blank Page</h1> {% endcomment %}
 
         </div>
         {% endblock %}
@@ -625,7 +626,13 @@
   });
 });
 </script>  
-  
+ <script>
+    setTimeout(function(){
+      if ($('#msg').length > 0) {
+        $('#msg').remove();
+      }
+    }, 4000)
+  </script> 
   {% endblock%}
   {% block js_page %} {% endblock %}
 

@@ -40,7 +40,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User               
-from django.http import HttpResponse, HttpRequest, JsonResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseRedirect, HttpRequest, JsonResponse, HttpResponseServerError
 
 from datetime import datetime, date
 from django.contrib import messages
@@ -79,7 +79,7 @@ class VistaBaseEdit(SuccessMessageMixin,SinPrivilegios, generic.UpdateView):
 
 class DepartamentoView(SinPrivilegios,generic.ListView):
         model = Departamento
-        template_name = "cto:departamento_list.html"
+        template_name = "cto/departamento_list.html"
         context_object_name = "obj"
         permission_required = "cto.view_departamento"
 
@@ -114,49 +114,45 @@ def departamentoInactivar(request,id):
     return HttpResponse("FAIL") 
 
 class PartesView(SinPrivilegios,generic.ListView):
-    model = Partes
-    template_name = "cto:partes_list.html"
-    context_object_name = "obj"
-    success_url= reverse_lazy("cto:partes_list")
-    permission_required = "cto.view_partes"
+        model = Partes
+        template_name = "cto/partes_list.html"
+        context_object_name = "obj"
+        success_url= reverse_lazy("cto:partes_list")
+        permission_required = "cto.view_partes"
 
   
     
-    def get_queryset(self):
-        current_userx = self.request.user.id
-        #print(current_userx)
-        queryset = Partes.objects.filter(user_id=current_userx)
-        xdepa=2
-        for part in queryset:
-            xdepa=part.claveDepartamento_id
+        def get_queryset(self):
+            current_userx = self.request.user.id
+            #print(current_userx)
+            queryset = Partes.objects.filter(user_id=current_userx)
+            xdepa=2
+            for part in queryset:
+                xdepa=part.claveDepartamento_id
         
-        #print(xdepa)
-        querydep = Departamento.objects.all()    
-        for depa in querydep:
+            print(xdepa)
             
-            if depa.claveDepartamento==xdepa:
-               xr1=depa.rango1    
-               xr2=depa.rango2
-            else:
-               xr1=depa.rango1    
-               xr2=depa.rango2
-               print(xdepa)
-               print('error') 
-        
-        #print(xr1)
-        #print(xr2)
-        return Partes.objects.filter(
-            Q(estado=True), Q(claveDepartamento__gte=xr1),  Q(claveDepartamento__lte=xr2) 
-        )
-            
-       
-                   
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(PartesView, self).get_context_data(**kwargs)
-        # Get the blog from id and add it to the context
-       
-        return context      
+            querydep = Departamento.objects.all()    
+            #print(querydep)
+            for depa in querydep:
+                print(depa.claveDepartamento)
+                
+                if depa.claveDepartamento==xdepa:
+                    xr1=depa.rango1    
+                    xr2=depa.rango2
+                    print(xdepa)
+                    print(xr1)
+                    print(xr2)
+                    return Partes.objects.filter(Q(estado=True), Q(claveDepartamento__gte=xr1),  Q(claveDepartamento__lte=xr2))
+                # else:
+                #    messages.ERROR (request, '¡Rango de Departamentos no registrado!')
+                #    return HttpResponseRedirect('/admn/')
+                
+        def get_context_data(self, **kwargs):
+                # Call the base implementation first to get a context
+            context = super(PartesView, self).get_context_data(**kwargs)
+            # Get the blog from id and add it to the context
+            return context      
     
     
 class PartesNew(VistaBaseCreate):
@@ -180,7 +176,7 @@ def partesInactivar(request,id):
     partes = Partes.objects.filter(pk=id).first()
 
     if request.method=="POST":
-        if partes:
+        if  partes:
             partes.estado = not partes.estado
             partes.save()
             return HttpResponse("OK")
@@ -243,21 +239,33 @@ def contratos2(request,contrato_id=None):
     template_name='cto/contrato.html'
     detalle = {}
     secuencia_data = {}
-    xUsuario = (request.user.id)
+    #xUsuario = (request.user.id)
     #print(xUsuario)
-   
-    partes = Partes.objects.filter(estado=True, user=xUsuario)    
+    #print (contrato_id)
     
-    p=partes.first()
-    #print (p)
+    if contrato_id:
+        contrato = Contratos.objects.filter(estado=True, id = contrato_id)
+        c = contrato.first()
+        xUsuario = (c.parte2_id)
+        print(xUsuario)
+        partes = Partes.objects.filter(estado=True, id=xUsuario)
+        p = partes.first()  
+        print (p)
+        dx = p.claveDepartamento_id
+    else:
+        xUsuario = (request.user.id)
+        partes = Partes.objects.filter(estado=True, id=xUsuario)
+        p = partes.first()
+        print (p)
+        dx = p.claveDepartamento_id
     
     
-    d1 = p.claveDepartamento
-    dx = p.claveDepartamento_id
+    #d1 = p.claveDepartamento
+    
     rfcparte = (p.rfc)
     #print(rfcparte)
     
-    #print(d1)
+    print(dx)
    
    
     
@@ -269,12 +277,13 @@ def contratos2(request,contrato_id=None):
     r1= (d2.rango1)
     r2= (d2.rango2)
     secuencia = (d2.f001)
+
     #print(d2.testigoUsual1)
     #print(d2.testigoUsual2)
-    
     #print (d3)
-    #print(secuencia)
-    
+    print(secuencia)
+    print (r1)
+    print (r2)
     
     partes3 =Partes.objects.filter(Q(estado=True),  Q(claveDepartamento_id__gte=r1), Q(claveDepartamento_id__lte=r2) ).order_by('nombreParte')
     
@@ -300,6 +309,8 @@ def contratos2(request,contrato_id=None):
             funcionario =Partes.objects.filter( user_id=r2)
         
         #print(funcionario)
+        
+        
         a2 = funcionario.first()
         #print(a2)
         a3 = (a2.id )
@@ -330,8 +341,11 @@ def contratos2(request,contrato_id=None):
         #print(r6)
         #print(f6)
     else:
-        print ("secuencia no asignada")    
-
+        #print ("secuencia no asignada")
+        messages.error (request, '¡Secuencia administrativa no asignada!')
+        #messages.error = ('secuencia no asignada')
+        return HttpResponseRedirect('/cto/contratos/')
+        
     
     if request.method == "GET":
         enc = Contratos.objects.filter(pk=contrato_id).first()
@@ -429,6 +443,20 @@ def contratos2(request,contrato_id=None):
                 'astep4':enc.astep4,
                 'astep5':enc.astep5,
                 'astep6':enc.astep6,
+
+                'fstep1':enc.fstep1,
+                'fstep2':enc.fstep2,
+                'fstep3':enc.fstep3,
+                'fstep4':enc.fstep4,
+                'fstep5':enc.fstep5,
+                'fstep6':enc.fstep6,
+            
+                'cstep1':enc.cstep1,
+                'cstep2':enc.cstep2,
+                'cstep3':enc.cstep3,
+                'cstep4':enc.cstep4,
+                'cstep5':enc.cstep5,
+                'cstep6':enc.cstep6,
             
                 'devuelto_por':enc.devuelto_por,
                 'current_user':enc.current_user,

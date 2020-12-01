@@ -41,6 +41,7 @@
                
       {% endfor %} 
 
+
       <!-- <div class="dropdown no-arrow">
       <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
@@ -77,7 +78,8 @@
       
     >
     <thead>
-      <th data-sortable="true" data-field="id">Folio</th>        
+      <th data-sortable="true" data-field="id">Folio&nbsp;&nbsp;</th>
+      <th data-sortable="true" data-field="id">Status&nbsp;&nbsp;</th>        
       <th data-sortable="true" data-field="tipocontrato">Tipo de Contrato</th>
       <th data-sortable="true" data-field="datecontrato">Fecha</th>
       <th data-sortable="true" data-field="parte2">Sujeto del contrato</th>
@@ -85,9 +87,9 @@
       
       <th class="all">Contrato</th>
       
-      
-      <th class="all">Modificar</th> 
-     
+       {% if item.status == "CAP" %}
+        <th class="all">Modificar</th> 
+       {% endif %}
     </thead>
     <tbody>
       {% for item in obj %}
@@ -97,6 +99,7 @@
       
       <tr>
         <td>{{ item.id }}</td>
+        <td>{{ item.status }}</td>
         <td>{{ item.tipocontrato }}</td>
         <td>{{ item.datecontrato|date:'d-M-Y' }}</td>
         <td>{{ item.parte2 }}</td>
