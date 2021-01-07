@@ -1475,4 +1475,4 @@ def calcular_edad_anos(fecha_nacimiento):
     fecha_actual = date.today()
     resultado = fecha_actual.year -  fecha_nacimiento.year
     resultado -= ((fecha_actual.month, fecha_actual.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
-    return result
+    return resultado          
