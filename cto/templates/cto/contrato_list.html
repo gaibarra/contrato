@@ -64,67 +64,59 @@
 
 
     <table 
-      id="table"
-      data-locale="es-MX"
-      class="table table-sm"
+       id="table"
       data-toggle="table"
       data-pagination="true"
       data-search="true"
-     
       data-show-columns="true"
       data-show-toggle="true"
       data-show-fullscreen="true"
       data-toolbar=".buttons-toolbar"
+      data-locale="es-MX"
       
     >
     <thead>
       <th data-sortable="true" data-field="id">Folio&nbsp;&nbsp;</th>
-      <th data-sortable="true" data-field="id">Status&nbsp;&nbsp;</th>        
       <th data-sortable="true" data-field="tipocontrato">Tipo de Contrato</th>
+      <th data-sortable="true" data-field="status">Status&nbsp;&nbsp;</th>        
+      
       <th data-sortable="true" data-field="datecontrato">Fecha</th>
       <th data-sortable="true" data-field="parte2">Sujeto del contrato</th>
       <th data-sortable="true" data-field="importeContrato">Importe</th>
       
       <th class="all">Contrato</th>
       
-       {% if item.status == "CAP" %}
+       
         <th class="all">Modificar</th> 
-       {% endif %}
+      
     </thead>
-    <tbody>
+   
+   <tbody>
       {% for item in obj %}
          
 
-        
-      
       <tr>
-        <td>{{ item.id }}</td>
-        <td>{{ item.status }}</td>
+        <td>{{ item.id}}</td>
+        
+        
         <td>{{ item.tipocontrato }}</td>
+        <td>{{ item.status }}</td>
         <td>{{ item.datecontrato|date:'d-M-Y' }}</td>
         <td>{{ item.parte2 }}</td>
         <td>{{ item.importeContrato }}</td>
-        
         <td>
           <a href="{% url 'cto:contrato_edit' item.id %}" class="href btn btn-success btn-circle">
               <i class="far fa-edit"></i>
           </a>
         </td>
-      <td>
-           
-           
+        <td>
              {% if item.status == "CAP" %}
                 <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{% url 'cto:contrato_edit2' item.id %}')"><i class="far fa-edit"></i></button>
-             
-           
               {% endif %}
-                                              
         </td> 
       </tr>
-       
       {% endfor %}
     </tbody>
-
 
     </table>
   </div>

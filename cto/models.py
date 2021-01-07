@@ -213,6 +213,7 @@ class Ciclos(ClaseModelo2):
     descripcionCiclo = models.CharField('Descripción del ciclo', max_length=150, blank=False, null=False)
     date_ini = models.DateTimeField('Fecha inicial del ciclo', blank=True, null=True)
     date_fin = models.DateTimeField('Fecha final del ciclo', blank=True, null=True)
+    ciclo_actual = models.BooleanField('Ciclo escolar vigente', default=False)
 
     def __str__(self):
         return '{}'.format(self.descripcionCiclo)
@@ -230,8 +231,11 @@ class Tipocontrato(ClaseModelo2):
     textoinicialContrato = RichTextField('Texto inicial del Contrato', blank=False, null=False)
     descripcionContrato = RichTextField('Descripción del Contrato', blank=True, null=True)
     marcatipoContrato = models.BooleanField(default=False)
+    enCalidadDe1 = models.CharField('En calidad de 1', max_length=150, blank=False, null=False, default="" )
+    enCalidadDe2 = models.CharField('En calidad de 2', max_length=150, blank=False, null=False, default="")
+    enCalidadDe2f = models.CharField('En calidad de 2', max_length=150, blank=False, null=False, default="")
+    enCalidadDe2e = models.CharField('En calidad de 2', max_length=150, blank=False, null=False, default="")
     
-   
     def __str__(self):
         return '{}'.format(self.tipoContrato)
 

@@ -49,7 +49,7 @@ from django.contrib.auth import authenticate
 from requests.api import get
 from bases.views import SinPrivilegios
 from bases.views import *
-from .models import Departamento, Partes, Contratos, Doctos, Tipocontrato, Requisitos, Valida, Secuencia, Regimen
+from .models import Departamento, Partes, Contratos, Doctos, Tipocontrato, Requisitos, Valida, Secuencia, Regimen, Ciclos
 from .forms import DepartamentoForm, PartesForm, ContratosForm
 from bases.views import SinPrivilegios
 from django.core.files.storage import FileSystemStorage, get_storage_class
@@ -247,16 +247,16 @@ def contratos2(request,contrato_id=None):
         contrato = Contratos.objects.filter(estado=True, id = contrato_id)
         c = contrato.first()
         xUsuario = (c.parte2_id)
-        print(xUsuario)
+        #print(xUsuario)
         partes = Partes.objects.filter(estado=True, id=xUsuario)
         p = partes.first()  
-        print (p)
+        #print (p)
         dx = p.claveDepartamento_id
     else:
         xUsuario = (request.user.id)
         partes = Partes.objects.filter(estado=True, id=xUsuario)
         p = partes.first()
-        print (p)
+        #print (p)
         dx = p.claveDepartamento_id
     
     
@@ -265,7 +265,7 @@ def contratos2(request,contrato_id=None):
     rfcparte = (p.rfc)
     #print(rfcparte)
     
-    print(dx)
+    #print(dx)
    
    
     
@@ -281,9 +281,9 @@ def contratos2(request,contrato_id=None):
     #print(d2.testigoUsual1)
     #print(d2.testigoUsual2)
     #print (d3)
-    print(secuencia)
-    print (r1)
-    print (r2)
+    #print(secuencia)
+    #print (r1)
+    #print (r2)
     
     partes3 =Partes.objects.filter(Q(estado=True),  Q(claveDepartamento_id__gte=r1), Q(claveDepartamento_id__lte=r2) ).order_by('nombreParte')
     
@@ -476,7 +476,13 @@ def contratos2(request,contrato_id=None):
     
     if request.method == "POST":
         
-        tipocontrato=1
+        
+        tipocontratox = Tipocontrato.objects.filter(marcatipoContrato = True)
+        tipocontratox = tipocontratox.first()
+        
+        
+        tipocontrato = tipocontratox.id 
+        #print(tipocontrato)
         datecontrato  = request.POST.get("datecontrato")
         datecontrato_ini  = request.POST.get("enc_datecontrato_ini")
         datecontrato_fin  = request.POST.get("enc_datecontrato_fin")
@@ -484,8 +490,8 @@ def contratos2(request,contrato_id=None):
         parte1 = 546
         parte2 = request.POST.get("enc_nombreParte")
 
-        enCalidadDe1 = "'CLIENTE '"
-        enCalidadDe2 = "'PRESTADOR DE SERVICIOS '"        
+        enCalidadDe1 = tipocontratox.enCalidadDe1
+        enCalidadDe2 = tipocontratox.enCalidadDe2        
         
         lugarContrato = request.POST.get("lugarContrato")
         ciudadContrato = "Mérida"
@@ -494,15 +500,16 @@ def contratos2(request,contrato_id=None):
         importeContrato = request.POST.get("enc_importeContrato")
         npContrato = request.POST.get("enc_npContrato")
         imppContrato = request.POST.get("enc_imppContrato")
+
         vhppContrato = 285
         totalhorasContrato = request.POST.get("enc_totalhorasContrato")
         testigoContrato1 = d2.testigoUsual1
-        testigoContrato2 = d2.testigoUsual1
+        testigoContrato2 = d2.testigoUsual2
         versionContrato = request.POST.get("versionContrato")
         status = request.POST.get("status")
        
         fun=Partes.objects.get(pk=a3)
-        tip=Tipocontrato.objects.get(pk=1)
+        tip=Tipocontrato.objects.get(pk=tipocontrato)
         
         if parte2:
          suj=Partes.objects.get(pk=parte2)
@@ -575,12 +582,12 @@ def contratos2(request,contrato_id=None):
         pdf= request.POST.get('pdf2')
         
         uploaded_file = request.FILES['pdf']
-        print(uploaded_file)
+        #print(uploaded_file)
             
         fs = FileSystemStorage()
-        print(fs)
+        #print(fs)
         name = fs.save(uploaded_file.name, uploaded_file)
-        print(name)
+        #print(name)
         pdf = name
 
         if vigenciaFinDocto != "":
@@ -628,11 +635,15 @@ login_required(login_url="/login/")
 def coverletter_export(request,id):
     
     contratos = Contratos.objects.filter(pk=id).first()  # Contrato en curso
-    tipoc = Tipocontrato.objects.get(id=1) # Información del tipo de contrato
-    valic = Valida.objects.filter(tipocontrato_id=1) # Validacion de información completa
+    tipoc = Tipocontrato.objects.get(id=contratos.tipocontrato_id) # Información del tipo de contrato
+    #print(tipoc.id)
+    valic = Valida.objects.filter(tipocontrato_id=tipoc.id) # Validacion de información completa
     partes = Partes.objects.get(id=contratos.parte2_id) # Datos del contratado **sujeto del contrato
     patron = Partes.objects.get(id=546)  # Datos del contratante
-    secue = Secuencia.objects.get(id=1) # Primer parrafo del contrato
+    secue = Secuencia.objects.filter(tipocontrato_id=tipoc.id).first() # Primer parrafo del contrato
+    ciclo = Ciclos.objects.filter(ciclo_actual=True).first() # Ciclo escolar actual
+    #print(tipoc.id)
+    #print(secue)
     regimen = Regimen.objects.get(id=partes.regfiscalParte_id) # Régimen fiscal del contratado
     replegal = Partes.objects.get(id=549) # Datos del contratante
     letras = numero_to_letras(contratos.importeContrato.amount)
@@ -719,18 +730,25 @@ def coverletter_export(request,id):
     
     
     textox = tipoc.textoinicialContrato
-    xnombreParte = partes.tituloParte + " " + partes.nombreParte
+    if partes.tituloParte:
+       xnombreParte = partes.tituloParte + " " + partes.nombreParte
+    else:
+       xnombreParte = "**********" + " " + partes.nombreParte 
+       #messages.info(request, message="Registrar: Título del Sujeto del Contrato")
+   
+   
     xcurp = partes.curp[10:11]
     if xcurp == "H":
         xelolaParte = "EL"
+        xenCalidadDe2 = tipoc.enCalidadDe2
     else:    
         xelolaParte = "LA"
-
+        xenCalidadDe2 = tipoc.enCalidadDe2f
     
-    xenCalidadDe2 = contratos.enCalidadDe2
+   
     xenCalidadDe2 = textox.replace("@enCalidadDe2" , xenCalidadDe2 )
     textox = xenCalidadDe2
-    xenCalidadDe1 = textox.replace("@enCalidadDe1" , contratos.enCalidadDe1 )
+    xenCalidadDe1 = textox.replace("@enCalidadDe1" , tipoc.enCalidadDe1 )
     textox = xenCalidadDe1
     xenCalidadDe1 = textox.replace("@elolaParte" , xelolaParte )
     textox = xenCalidadDe1
@@ -739,21 +757,31 @@ def coverletter_export(request,id):
     xenCalidadDe1 = textox.replace("@nombreParte" , patron.nombreParte )
     textox = xenCalidadDe1
     xenCalidadDe1 = textox.replace("@tituloParteRL" , replegal.tituloParte )
+    
+    
+    
     textox = xenCalidadDe1
-    xenCalidadDe1 = textox.replace("@idrep_legalParte" , replegal.nombreParte )
+    xenCalidadDe1 = textox.replace("@idrep_legalParte" , replegal.tituloParte + " " + replegal.nombreParte  )
     
     p002.add_run(xenCalidadDe1, style = 'CommentsStyle').bold = False
     p002.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     
-    p003 = document.add_paragraph()
-    p003.add_run("CLÁUSULAS", style = 'CommentsStyle').bold = True
-    p003.alignment = WD_ALIGN_PARAGRAPH.CENTER
-
-   
-    secue = Secuencia.objects.get(id=1)
+    
+    if tipoc.id == 1:
+       p003 = document.add_paragraph()
+       p003.add_run("CLÁUSULAS", style = 'CommentsStyle').bold = True
+       p003.alignment = WD_ALIGN_PARAGRAPH.CENTER 
+    
+    if tipoc.id == 7 or tipoc.id == 8 or tipoc.id == 4:
+       p003 = document.add_paragraph()
+       p003.add_run("DECLARACIONES", style = 'CommentsStyle').bold = True
+       p003.alignment = WD_ALIGN_PARAGRAPH.CENTER 
+    #print(secue.id)
+    #secue = Secuencia.objects.get(id=1)
     p004 = document.add_paragraph()
     textosecuex = secue.identificador + ".- " + secue.textoSecuencia
-    textosecuex = textosecuex.replace("@enCalidadDe2" , contratos.enCalidadDe2 )
+    textosecuex = textosecuex.replace("@enCalidadDe2" , tipoc.enCalidadDe2 )
+    textosecuex = textosecuex.replace("@enCalidadDe1" , tipoc.enCalidadDe1 )
     p004.add_run(textosecuex, style = 'CommentsStyle').bold = True
     paragraph_format = p004.paragraph_format
     paragraph_format.left_indent = Inches(0.0)
@@ -761,25 +789,71 @@ def coverletter_export(request,id):
     paragraph_format.space_after = Pt(0)
     paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
     
-    
-    nums = { 2, 3, 4, 5 , 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 }
+    if tipoc.id == 1:
+       nums = ( 2, 3, 4, 5 , 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 )
 
+    if tipoc.id == 7:
+       nums = ( 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381 ) 
     
-    secue = Secuencia.objects.get(id=2)
+    if tipoc.id == 8:
+       nums = (   384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457 )
+    
+    if tipoc.id == 9:
+       nums = ( 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533 )
+
+    if tipoc.id == 10:
+           nums = ( 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600 )       
+    #secue = Secuencia.objects.get(id=2)
+    
+    if tipoc.id == 4:
+           nums = ( 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187 )
+    
+    if tipoc.id == 4:
+           nums = ()
+           
    
-    for n in nums:
+    for n in nums:  
+        print(n)
         secue = Secuencia.objects.get(id=n)   
         if secue.nivel2 == 0:
             
                secue = Secuencia.objects.get(id=n)
                p005 = document.add_paragraph()
-               textosecue = secue.identificador + ".- " + secue.textoSecuencia
-               textosecue = textosecue.replace("@enCalidadDe1" , contratos.enCalidadDe1 )
-               textosecue = textosecue.replace("@enCalidadDe2" , contratos.enCalidadDe2 )
+               if secue.identificador != "," and  secue.identificador != ".":
+                  textosecue = secue.identificador + ".- " + secue.textoSecuencia
+               else:
+                  textosecue = secue.textoSecuencia
+               
+               textosecue = textosecue.replace("@enCalidadDe1" , tipoc.enCalidadDe1 )
+               
+               xcurp = partes.curp[10:11]
+               if xcurp == "H":
+                     xelolaParte = "EL"
+                     xenCalidadDe2 = tipoc.enCalidadDe2
+               else:    
+                     xelolaParte = "LA"
+                     xenCalidadDe2 = tipoc.enCalidadDe2f
+               
+               textosecue = textosecue.replace("@enCalidadDe2" , xenCalidadDe2 )
+               
+               
+               
+               if partes.fecha_ingreso:
+                  #print(secue.id)
+                  textosecue = textosecue.replace("@fechaingreso", partes.fecha_ingreso.strftime("%d de %B de %Y"))
+               else:
+                  textosecue = textosecue.replace("@fechaingreso", "**********" ) 
+               
+               textosecue = textosecue.replace("@importeContrato" , currency )
+               textosecue = textosecue.replace("@letras" , "(" + letras + ")" )
+               
                textosecue = textosecue.replace("@datecontrato_ini" , contratos.datecontrato_ini.strftime("%d de %B de %Y"))
                textosecue = textosecue.replace("@datecontrato_fin" , contratos.datecontrato_fin.strftime("%d de %B de %Y"))
-               textosecue = textosecue.replace("@FechaContrato" , contratos.datecontrato.strftime("%d de %B de %Y"))
-               p005.add_run(textosecue, style = 'CommentsStyle').bold = True
+               textosecue = textosecue.replace("@datecontratox" , contratos.datecontrato.strftime("%d de %B de %Y"))
+               if secue.identificador == ".":
+                  p005.add_run(textosecue, style = 'CommentsStyle').bold = False
+               else:
+                  p005.add_run(textosecue, style = 'CommentsStyle').bold = True
                paragraph_format = p005.paragraph_format
                paragraph_format.space_before = Pt(0)
                paragraph_format.space_after = Pt(0)
@@ -795,12 +869,91 @@ def coverletter_export(request,id):
             p006= document.add_paragraph()
             textosecue = secue.identificador + ".- " + secue.textoSecuencia
             textosecue = textosecue.replace("@curp" , partes.curp )
-            textosecue = textosecue.replace("@titulo_profParte" , partes.titulo_profParte )
-            textosecue = textosecue.replace("@universidadParte" , partes.universidadParte )
-            textosecue = textosecue.replace("@cedula_profParte" , partes.cedula_profParte )
-            textosecue = textosecue.replace("@rfc" , partes.rfc )
-            textosecue = textosecue.replace("@regfiscalParte" , regimen.nombreRegimen )
-            textosecue = textosecue.replace("@domicilioParte" , partes.domicilioParte )
+            
+            if partes.titulo_profParte:
+               textosecue = textosecue.replace("@titulo_profParte" , partes.titulo_profParte )
+            else:
+               textosecue = textosecue.replace("@titulo_profParte" , "**********" )
+
+           
+
+            
+
+
+            if partes.universidadParte:
+               textosecue = textosecue.replace("@universidadParte" , partes.universidadParte )
+            else:
+               textosecue = textosecue.replace("@universidadParte" , "**********" )  
+            
+            if partes.cedula_profParte:
+               textosecue = textosecue.replace("@cedula_profParte" , partes.cedula_profParte )
+            else:
+               textosecue = textosecue.replace("@cedula_profParte" , "**********" )
+
+            if ciclo.ciclo_actual:
+               textosecue = textosecue.replace("@CicloParte" ,ciclo.descripcionCiclo )
+            else:
+               textosecue = textosecue.replace("@CicloParte" , "**********" )    
+            
+            if partes.rfc:
+               textosecue = textosecue.replace("@rfc" , partes.rfc )
+            else:
+               textosecue = textosecue.replace("@rfc" , "**********" )       
+            
+            if regimen.nombreRegimen:
+               textosecue = textosecue.replace("@regfiscalParte" , regimen.nombreRegimen )
+            else:
+               textosecue = textosecue.replace("@regfiscalParte" , "**********" )  
+
+            if partes.domicilioParte:
+               textosecue = textosecue.replace("@domicilioParte" , partes.domicilioParte )
+            else:
+               textosecue = textosecue.replace("@domicilioParte" , "**********" )    
+
+            if partes.nacionalidadParte:
+               textosecue = textosecue.replace("@nacionalidadParte" , partes.nacionalidadParte )
+            else:
+               textosecue = textosecue.replace("@nacionalidadParte" , "**********" )
+             
+            ano = partes.rfc[4:6]
+            mes = partes.rfc[6:8]
+            dia = partes.rfc[8:10]
+            xano = int(ano)	+ 1900
+            
+            fecha_nacimiento = date(xano, int(mes), int(dia))
+            edad = calcular_edad_anos(fecha_nacimiento)
+            #print(f'la edad es {edad} años')
+
+            if edad:
+               textosecue = textosecue.replace("@edadParte" , " "+str(edad) )
+            else:
+               textosecue = textosecue.replace("@edadParte" , "**********" )
+            
+            sexo = partes.curp[10:11]
+            
+            if sexo == "H":
+               textosecue = textosecue.replace("@sexoParte" , "MASCULINO" ) 
+            else:
+               if sexo == "M": 
+                   textosecue = textosecue.replace("@sexoParte" , "FEMENINO" )
+               else:
+                   textosecue = textosecue.replace("@sexoParte" , "**********" )
+            
+            if partes.estadocivilParte:
+               textosecue = textosecue.replace("@estadocivilParte" , partes.estadocivilParte )
+            else:
+               textosecue = textosecue.replace("@estadocivilParte" , "**********" )
+            
+            textosecue = textosecue.replace("@datecontrato_ini" , contratos.datecontrato_ini.strftime("%d de %B de %Y"))
+            textosecue = textosecue.replace("@datecontrato_fin" , contratos.datecontrato_fin.strftime("%d de %B de %Y"))
+            textosecue = textosecue.replace("@datecontratox" , contratos.datecontrato.strftime("%d de %B de %Y"))
+            
+            
+            
+            
+            
+            textosecue = textosecue.replace("@idrep_legalParte" , replegal.tituloParte + " " + replegal.nombreParte )
+            textosecue = textosecue.replace("@RPImssParteC" , "8401667310-9 " )
             textosecue = textosecue.replace("@enCalidadDe1" , contratos.enCalidadDe1 )
             textosecue = textosecue.replace("@enCalidadDe2" , contratos.enCalidadDe2 )
             textosecue = textosecue.replace("@domicilioPatron" , patron.domicilioParte )
@@ -812,7 +965,7 @@ def coverletter_export(request,id):
             p006.add_run(textosecue, style = 'CommentsStyle').bold = False
             paragraph_format = p006.paragraph_format
             paragraph_format.space_before = Pt(0)
-            paragraph_format.space_after = Pt(0)
+            paragraph_format.space_after = Pt(3)
             paragraph_format.left_indent = Inches(0.4)
             paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
             
@@ -828,10 +981,10 @@ def coverletter_export(request,id):
     
     dtab_cells=dtable.rows[0].cells
     dt1=dtab_cells[0].text = ''
-    dt1=dtab_cells[0].paragraphs[0].add_run(contratos.enCalidadDe1).font.size = Pt(11)
+    dt1=dtab_cells[0].paragraphs[0].add_run(tipoc.enCalidadDe1).font.size = Pt(11)
     dt1=dtab_cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     dt1=dtab_cells[1].text = ''
-    dt1=dtab_cells[1].paragraphs[0].add_run(contratos.enCalidadDe2).font.size = Pt(11)
+    dt1=dtab_cells[1].paragraphs[0].add_run(xenCalidadDe2).font.size = Pt(11)
     dt1=dtab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     
     dtab_cells=dtable.rows[1].cells
@@ -850,7 +1003,12 @@ def coverletter_export(request,id):
     dt2=dtab_cells[0].paragraphs[0].add_run(replegal.tituloParte + " " + replegal.nombreParte).font.size = Pt(11)
     dt2=dtab_cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     dt2=dtab_cells[1].text = '' 
-    dt2=dtab_cells[1].paragraphs[0].add_run(partes.tituloParte + " " + partes.nombreParte).font.size = Pt(11)
+    
+    if partes.tituloParte:
+       dt2=dtab_cells[1].paragraphs[0].add_run(partes.tituloParte + " " + partes.nombreParte).font.size = Pt(11)
+    else:
+       dt2=dtab_cells[1].paragraphs[0].add_run("**********" + " " + partes.nombreParte).font.size = Pt(11)       
+    
     dt2=dtab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     dtable=document.add_table(rows=1, cols=2)
@@ -898,7 +1056,16 @@ def coverletter_export(request,id):
  
     xtab_cells=xtable.rows[0].cells
     xt1=xtab_cells[1].text = '' 
-    xt1=xtab_cells[1].paragraphs[0].add_run(partes.tituloParte + " " + partes.nombreParte).font.size = Pt(8)
+    
+    if partes.tituloParte:
+       xt1=xtab_cells[1].paragraphs[0].add_run(partes.tituloParte + " " + partes.nombreParte).font.size = Pt(8)
+    else:
+       xt1=xtab_cells[1].paragraphs[0].add_run("**********" + " " + partes.nombreParte).font.size = Pt(8)
+    
+    
+    
+    
+    
     xt1=xtab_cells[1].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     
     xt1=xtab_cells[0].text = '' 
@@ -1302,4 +1469,10 @@ def marcaContrato(request,id):
         return HttpResponse("FAIL")
     
     
-    return HttpResponse("FAIL")         
+    return HttpResponse("FAIL")
+
+def calcular_edad_anos(fecha_nacimiento):
+    fecha_actual = date.today()
+    resultado = fecha_actual.year -  fecha_nacimiento.year
+    resultado -= ((fecha_actual.month, fecha_actual.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+    return result

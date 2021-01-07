@@ -46,7 +46,7 @@ class PartesForm(forms.ModelForm):
             )
     class Meta:
         model =Partes
-        fields=['claveDepartamento','codigo', 'tituloParte', 'nombresParte', 'apellidoPaternoParte', 'apellidoMaternoParte','fecha_ingreso', 'email', 'lugarnacimientoParte', 'rfc', 'imss', 'curp','regfiscalParte', 'cedula_profParte', 'titulo_profParte', 'universidadParte','domicilioParte', 'phone', 'mobile','grupo_sanguineo','alergias']
+        fields=['claveDepartamento','codigo', 'tituloParte', 'nombresParte', 'apellidoPaternoParte', 'apellidoMaternoParte','fecha_ingreso', 'email', 'lugarnacimientoParte', 'rfc', 'imss',  'curp', 'nacionalidadParte','estadocivilParte','regfiscalParte', 'cedula_profParte', 'titulo_profParte', 'universidadParte','domicilioParte', 'phone', 'mobile','grupo_sanguineo','alergias']
         exclude = ['um','fm','uc','fc']
     
         
