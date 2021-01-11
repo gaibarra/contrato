@@ -131,7 +131,7 @@ class Departamento(ClaseModelo2):
 class Puestos(ClaseModelo2):
     nombrePuesto = models.CharField('Nombre Puesto', max_length=100, blank=False, null=False)
     claveCampus = models.CharField('Clave del Campus', max_length=3, blank=False, null=False)
-    actividadesPuesto = RichTextField('Actividades', blank=True, null=True)
+    actividadesPuesto = RichTextField('Actividades del puesto', blank=True, null=True)
     
     def __str__(self):
         return '{}'.format(self.nombrePuesto)
@@ -197,7 +197,8 @@ class Partes(ClaseModelo2):
     salarioDiario = models.FloatField('Salario Diario', blank=True, null=True)
     nacionalidadParte =  models.CharField('Nacionalidad', max_length=30, blank=True, null=True)
     estadocivilParte =  models.CharField('Estado Civil', max_length=30, blank=True, null=True)
-
+    actividadesParte = RichTextField('Actividades del puesto', blank=True, null=True)
+    
 
     def __str__(self):
         return '{}'.format(self.nombreParte)
