@@ -86,6 +86,11 @@ class PartesForm(ModelForm):
         self.fields['domicilioParte'].widget.attrs['verbose_name'] = "Domicilio"
         self.fields['actividadesParte'].widget.attrs['style'] = "width:600px"
         self.fields['fecha_ingreso'].widget.attrs['style'] = "width:200px"
+        self.fields['clavePuesto'].required = True
+        self.fields['rfc'].required = True
+        self.fields['curp'].required = True
+        self.fields['nombresParte'].required = True
+        self.fields['apellidoPaternoParte'].required = True
 
 
 class PartesForm2(ModelForm):
@@ -143,6 +148,12 @@ class PartesForm2(ModelForm):
         self.fields['domicilioParte'].widget.attrs['verbose_name'] = "Domicilio"
         self.fields['actividadesParte'].widget.attrs['style'] = "width:600px"
         self.fields['fecha_ingreso'].widget.attrs['style'] = "width:200px"
+        self.fields['clavePuesto'].required = True
+        self.fields['rfc'].required = True
+        self.fields['curp'].required = True
+        self.fields['nombresParte'].required = True
+        self.fields['apellidoPaternoParte'].required = True
+        
 
 
 class ContratosForm(forms.ModelForm):
